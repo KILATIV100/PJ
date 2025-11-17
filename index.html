@@ -17,12 +17,9 @@
             --white: #ffffff;
             --light-gray: #f5f5f5;
             --dark-gray: #2d3e50;
-            --bright-cyan: #00d9d9;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -37,7 +34,7 @@
             padding: 0 20px;
         }
 
-        /* ШАПКА */
+        /* HEADER */
         header {
             background: var(--white);
             border-bottom: 1px solid #f0f0f0;
@@ -59,9 +56,6 @@
             font-weight: 700;
             color: var(--primary);
             font-family: 'Montserrat', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         nav a {
@@ -75,10 +69,7 @@
             display: inline-block;
         }
 
-        nav a:hover {
-            color: var(--primary);
-            background: var(--light-gray);
-        }
+        nav a:hover { color: var(--primary); background: var(--light-gray); }
 
         .cta-button {
             background: var(--primary);
@@ -89,7 +80,8 @@
             font-weight: 600;
             font-size: 14px;
             transition: all 0.3s ease;
-            display: inline-block;
+            border: none;
+            cursor: pointer;
         }
 
         .cta-button:hover {
@@ -98,7 +90,7 @@
             box-shadow: 0 4px 12px rgba(29, 180, 179, 0.3);
         }
 
-        /* ГЕРОЙ */
+        /* HERO */
         .hero {
             background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
             padding: 80px 0;
@@ -114,9 +106,7 @@
             line-height: 1.2;
         }
 
-        .hero h1 span {
-            color: var(--primary);
-        }
+        .hero h1 span { color: var(--primary); }
 
         .hero p {
             font-size: 18px;
@@ -145,11 +135,9 @@
             border: 2px solid var(--primary);
         }
 
-        .btn-secondary:hover {
-            background: var(--light-gray);
-        }
+        .btn-secondary:hover { background: var(--light-gray); }
 
-        /* ПЕРЕВАГИ */
+        /* ADVANTAGES */
         .advantages {
             padding: 80px 0;
             background: var(--white);
@@ -185,10 +173,7 @@
             box-shadow: 0 8px 20px rgba(29, 180, 179, 0.15);
         }
 
-        .advantage-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
+        .advantage-icon { font-size: 40px; margin-bottom: 15px; }
 
         .advantage-card h3 {
             font-family: 'Montserrat', sans-serif;
@@ -203,7 +188,105 @@
             color: var(--dark-gray);
         }
 
-        /* ПОСЛУГИ */
+        /* CALCULATOR */
+        .calculator {
+            padding: 80px 0;
+            background: var(--dark);
+        }
+
+        .calculator .section-title { color: white; }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid { grid-template-columns: 1fr; }
+        }
+
+        .calc-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .calc-form label {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .calc-form input,
+        .calc-form select {
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .calc-form input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .calc-form input:focus,
+        .calc-form select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
+        }
+
+        .calc-calc {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .calc-calc:hover {
+            background: #16a39d;
+            transform: translateY(-2px);
+        }
+
+        .calc-result {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(29, 180, 179, 0.3);
+            color: white;
+        }
+
+        .calc-result h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .calc-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .calc-result > div:last-child {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.8;
+        }
+
+        /* SERVICES */
         .services {
             padding: 80px 0;
             background: var(--light-gray);
@@ -221,17 +304,21 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            border-left: 4px solid var(--primary);
         }
 
         .service-card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .service-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
         }
 
         .service-card h3 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 12px;
@@ -243,301 +330,34 @@
             margin-bottom: 15px;
         }
 
-        .service-features {
-            font-size: 12px;
-            color: var(--primary);
-            background: rgba(29, 180, 179, 0.1);
-            padding: 10px;
-            border-radius: 4px;
-            line-height: 1.6;
-        }
-
-        /* ПОРТФОЛІО */
-        .portfolio {
-            padding: 80px 0;
-            background: var(--white);
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .portfolio-item {
-            background: var(--light-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .portfolio-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(29, 180, 179, 0.2);
-        }
-
-        .portfolio-item-content {
-            text-align: center;
-        }
-
-        .portfolio-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .portfolio-item h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .portfolio-item p {
-            font-size: 12px;
-            color: var(--dark-gray);
-        }
-
-        /* РОЗРАХУНОК */
-        .calculator {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--dark) 0%, #0d2d3a 100%);
-            color: white;
-        }
-
-        .calculator .section-title {
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .calculator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .calc-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .calc-form label {
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .calc-form input,
-        .calc-form select {
-            padding: 12px;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-        }
-
-        .calc-form input::placeholder {
-            color: rgba(255,255,255,0.6);
-        }
-
-        .calc-result {
-            background: rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 8px;
-            border: 1px solid var(--bright-cyan);
-        }
-
-        .calc-result h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .calc-price {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--bright-cyan);
-            margin-bottom: 15px;
-        }
-
-        .calc-calc {
-            padding: 12px 24px;
-            background: var(--bright-cyan);
-            color: var(--dark);
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .calc-calc:hover {
-            background: var(--primary);
-        }
-
-        @media (max-width: 768px) {
-            .calculator-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-        }
-
-        /* ВІДГУКИ */
-        .testimonials {
-            padding: 80px 0;
-            background: var(--light-gray);
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .testimonial {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .testimonial-text {
-            font-style: italic;
-            color: var(--dark-gray);
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .testimonial-author {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 14px;
-        }
-
-        .testimonial-position {
-            font-size: 12px;
-            color: var(--primary);
-        }
-
-        .stars {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        /* КОНТАКТИ */
-        .contact {
-            padding: 80px 0;
-            background: var(--white);
-        }
-
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .contact-info h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 20px;
-        }
-
-        .contact-item {
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .contact-item strong {
-            color: var(--dark);
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .contact-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .contact-form input,
-        .contact-form textarea {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-        }
-
-        .contact-form textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .contact-form button {
-            padding: 12px 24px;
+        .price-badge {
+            display: inline-block;
             background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
         }
 
-        .contact-form button:hover {
-            background: var(--dark);
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .contact-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ФУТЕР */
+        /* FOOTER */
         footer {
             background: var(--dark);
             color: white;
-            padding: 40px 0 20px;
+            padding: 50px 0 20px;
         }
 
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
             margin-bottom: 30px;
         }
 
         .footer-section h4 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
             margin-bottom: 15px;
-            color: var(--bright-cyan);
+            color: white;
         }
 
         .footer-section ul {
@@ -545,18 +365,17 @@
         }
 
         .footer-section ul li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .footer-section a {
             color: rgba(255,255,255,0.7);
             text-decoration: none;
-            font-size: 14px;
             transition: color 0.3s ease;
         }
 
         .footer-section a:hover {
-            color: var(--bright-cyan);
+            color: var(--primary);
         }
 
         .footer-bottom {
@@ -569,275 +388,242 @@
 
         .social-links {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             margin-top: 15px;
         }
 
         .social-links a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            color: var(--bright-cyan);
+            width: 40px;
+            height: 40px;
+            background: rgba(29, 180, 179, 0.2);
+            border-radius: 50%;
             transition: all 0.3s ease;
         }
 
         .social-links a:hover {
             background: var(--primary);
-            color: white;
+            transform: translateY(-2px);
         }
 
-        /* УТИЛІТИ */
-        .section-subtitle {
-            text-align: center;
-            font-size: 16px;
-            color: var(--primary);
-            margin-bottom: 15px;
+        /* CONTACT */
+        .contact {
+            padding: 80px 0;
+            background: var(--white);
         }
 
-        section {
-            scroll-margin-top: 80px;
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
         }
 
         @media (max-width: 768px) {
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
+            .contact-content { grid-template-columns: 1fr; }
+        }
 
-            .hero-buttons .cta-button {
-                width: 100%;
-                text-align: center;
-            }
+        .contact-info h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 25px;
+        }
 
-            nav a {
-                display: none;
-            }
+        .contact-item {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .contact-item strong {
+            color: var(--dark);
+        }
+
+        .contact-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
+        }
+
+        .contact-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background: var(--dark);
+            transform: translateY(-2px);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .section-title { font-size: 28px; }
+            nav { display: none; }
         }
     </style>
 </head>
 <body>
-    <!-- ШАПКА -->
+    <!-- HEADER -->
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">🚀 PRO JET</div>
+                <div class="logo">🚀 Pro Jet</div>
                 <nav>
-                    <a href="#advantages">Переваги</a>
                     <a href="#services">Послуги</a>
-                    <a href="#portfolio">Портфоліо</a>
-                    <a href="#calculator">Розрахунок</a>
+                    <a href="#calculator">Калькулятор</a>
                     <a href="#contact">Контакти</a>
+                    <a href="#contact" class="cta-button">Замовити</a>
                 </nav>
-                <a href="#contact" class="cta-button">Замовити</a>
             </div>
         </div>
     </header>
 
-    <!-- ГЕРОЙ -->
+    <!-- HERO -->
     <section class="hero">
         <div class="container">
-            <h1>Лазерне гравіювання і порізка <span>бізнес-класу</span></h1>
-            <p>Професійне брендування вашої продукції за 24 години. Швидкість, точність, якість — усе в одному місці.</p>
+            <h1>Лазерне <span>Гравіювання</span> та <span>Порізка</span></h1>
+            <p>Професійні послуги для вашого бренду. Швидкість, якість, ціна!</p>
             <div class="hero-buttons">
-                <a href="#contact" class="cta-button">Замовити зараз</a>
-                <a href="#services" class="cta-button btn-secondary">Дізнатися більше</a>
+                <a href="#calculator" class="cta-button">Розрахувати ціну</a>
+                <a href="#contact" class="cta-button btn-secondary">Замовити</a>
             </div>
         </div>
     </section>
 
-    <!-- ПЕРЕВАГИ -->
-    <section id="advantages" class="advantages">
+    <!-- ADVANTAGES -->
+    <section class="advantages">
         <div class="container">
-            <h2 class="section-title">Чому саме Pro Jet?</h2>
+            <h2 class="section-title">Чому Обирають Pro Jet?</h2>
             <div class="advantages-grid">
                 <div class="advantage-card">
                     <div class="advantage-icon">⚡</div>
                     <h3>Швидкість</h3>
-                    <p>Готуємо більшість замовлень за 24 години без потреби в передоплаті</p>
-                </div>
-                <div class="advantage-card">
-                    <div class="advantage-icon">🎯</div>
-                    <h3>Точність</h3>
-                    <p>Гравіюємо до 0.1мм з використанням 20-ватного ЧПУ станка последнього покоління</p>
+                    <p>Готові за 24 години! Найшвидше на ринку.</p>
                 </div>
                 <div class="advantage-card">
                     <div class="advantage-icon">💎</div>
                     <h3>Якість</h3>
-                    <p>Кожен виріб контролюється вручну перед передачею клієнту</p>
+                    <p>Професійна обробка кожного виробу. Бездоганний результат.</p>
                 </div>
                 <div class="advantage-card">
-                    <div class="advantage-icon">🤝</div>
-                    <h3>Лояльність</h3>
-                    <p>Персональний підхід до кожного проекту та довгострокові партнерства</p>
+                    <div class="advantage-icon">💰</div>
+                    <h3>Ціни</h3>
+                    <p>Найвигідніші на ринку. Прозорі розрахунки без схованих збирань.</p>
                 </div>
                 <div class="advantage-card">
-                    <div class="advantage-icon">📦</div>
-                    <h3>Комплекс</h3>
-                    <p>Закриваємо всі потреби у брендуванні: від ідеї до готового виробу</p>
+                    <div class="advantage-icon">🎯</div>
+                    <h3>Точність</h3>
+                    <p>Точність до 0,1 мм. Ідеальні краї та деталі.</p>
                 </div>
                 <div class="advantage-card">
-                    <div class="advantage-icon">🚀</div>
-                    <h3>Розширення</h3>
-                    <p>Готові орендувати продукцію у наших партнерів або виготовити з нуля</p>
+                    <div class="advantage-icon">🌍</div>
+                    <h3>Матеріали</h3>
+                    <p>Дерево, акрил, метал, шкіра - все в одному місці!</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">📱</div>
+                    <h3>Зручність</h3>
+                    <p>Замовляйте онлайн. Консультація бісплатна.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ПОСЛУГИ -->
+    <!-- SERVICES -->
     <section id="services" class="services">
         <div class="container">
             <h2 class="section-title">Наші Послуги</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <h3>🎁 Сувенірна Продукція</h3>
-                    <p>Гравіювання та порізка сувенірів: ручки, брелки, акрилові вішки, дерев'яні товари</p>
-                    <div class="service-features">
-                        ✓ Малі об'єми<br>
-                        ✓ Швидкий результат<br>
-                        ✓ Індивідуальний дизайн
-                    </div>
+                    <div class="service-icon">✏️</div>
+                    <h3>Гравіювання</h3>
+                    <p>Нанесення тексту, логотипа або малюнка на матеріал.</p>
+                    <span class="price-badge">від 100 грн</span>
                 </div>
-
                 <div class="service-card">
-                    <h3>🏢 Корпоративне Брендування</h3>
-                    <p>Маркування офісної продукції: папка, записники, кружки, одяг</p>
-                    <div class="service-features">
-                        ✓ Великі об'єми<br>
-                        ✓ Спеціальні ціни<br>
-                        ✓ Логістика
-                    </div>
+                    <div class="service-icon">✂️</div>
+                    <h3>Порізка</h3>
+                    <p>Точна лазерна порізка складних форм.</p>
+                    <span class="price-badge">від 50 грн</span>
                 </div>
-
                 <div class="service-card">
-                    <h3>🎨 Дизайн & Консультація</h3>
-                    <p>Допоможемо розробити макет та вибрати оптимальний матеріал для вашого проекту</p>
-                    <div class="service-features">
-                        ✓ Безкоштовна консультація<br>
-                        ✓ Пробні зразки<br>
-                        ✓ Коригування
-                    </div>
-                </div>
-
-                <div class="service-card">
-                    <h3>📦 Орендування Продукції</h3>
-                    <p>Короткострокова орендування брендованої продукції для подій та промо</p>
-                    <div class="service-features">
-                        ✓ Мережа партнерів<br>
-                        ✓ Гнучкі умови<br>
-                        ✓ Логістика включена
-                    </div>
-                </div>
-
-                <div class="service-card">
-                    <h3>🖼️ Матеріали</h3>
-                    <p>Працюємо з деревом, акрилом, шкіри, пластику, кольоровим папером та іншим</p>
-                    <div class="service-features">
-                        ✓ Широкий вибір<br>
-                        ✓ Висока якість<br>
-                        ✓ Конкурентні ціни
-                    </div>
-                </div>
-
-                <div class="service-card">
-                    <h3>⚙️ Точна Обробка</h3>
-                    <p>Порізка, гравіювання, маркування з найвищою точністю та чистотою</p>
-                    <div class="service-features">
-                        ✓ До 0.1мм точність<br>
-                        ✓ Без подряпин<br>
-                        ✓ Гладкі краї
-                    </div>
+                    <div class="service-icon">🎨</div>
+                    <h3>Брендування</h3>
+                    <p>Комплексне оформлення ваших виробів.</p>
+                    <span class="price-badge">від 150 грн</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ПОРТФОЛІО -->
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <h2 class="section-title">Портфоліо Робіт</h2>
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">🎀</div>
-                        <h3>Дерев'яні Коробки</h3>
-                        <p>Гравіювання логотипів на подарункові коробки</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">📱</div>
-                        <h3>Пластикові Чохли</h3>
-                        <p>Маркування мобільних аксесуарів</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">☕</div>
-                        <h3>Гарячі Напої</h3>
-                        <p>Гравіювання на кружках та склянках</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">🎖️</div>
-                        <h3>Медалі & Нагороди</h3>
-                        <p>Виготовлення персоналізованих нагород</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">📸</div>
-                        <h3>Фоторамки</h3>
-                        <p>Гравіювання персональних фоторамок</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <div class="portfolio-item-content">
-                        <div class="portfolio-icon">🔑</div>
-                        <h3>Брелки</h3>
-                        <p>Маркування сувенірних брелків</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- КАЛЬКУЛЯТОР -->
+    <!-- CALCULATOR -->
     <section id="calculator" class="calculator">
         <div class="container">
             <h2 class="section-title">Розрахунок Вартості</h2>
             <div class="calculator-grid">
                 <div class="calc-form">
                     <label>Виберіть матеріал:</label>
-                    <select id="material">
-                        <option value="200">Дерево (от 200 грн)</option>
-                        <option value="300">Акрил (от 300 грн)</option>
-                        <option value="250">Пластик (от 250 грн)</option>
-                        <option value="350">Шкіра (от 350 грн)</option>
-                        <option value="150">Папір (от 150 грн)</option>
+                    <select id="material" onchange="calculatePrice()">
+                        <option value="100">Дерево (від 100 грн)</option>
+                        <option value="150">Акрил (від 150 грн)</option>
+                        <option value="120">Пластик (від 120 грн)</option>
+                        <option value="180">Шкіра (від 180 грн)</option>
+                        <option value="200">Метал (від 200 грн)</option>
                     </select>
 
                     <label>Розмір об'єкта (см²):</label>
-                    <input type="number" id="size" placeholder="100" value="100">
+                    <input type="number" id="size" placeholder="100" value="100" oninput="calculatePrice()">
 
                     <label>Кількість копій:</label>
-                    <input type="number" id="quantity" placeholder="10" value="10">
+                    <input type="number" id="quantity" placeholder="10" value="10" oninput="calculatePrice()">
 
                     <label>Складність дизайну:</label>
-                    <select id="complexity">
+                    <select id="complexity" onchange="calculatePrice()">
                         <option value="1">Проста (логотип)</option>
                         <option value="1.5">Середня (детальний малюнок)</option>
-                        <option value="2">Складна (фото/граділент)</option>
+                        <option value="2">Складна (фото/градієнт)</option>
                     </select>
-
-                    <button class="calc-calc" onclick="calculatePrice()">Розрахувати</button>
                 </div>
 
                 <div class="calc-result">
@@ -855,42 +641,7 @@
         </div>
     </section>
 
-    <!-- ВІДГУКИ -->
-    <section id="testimonials" class="testimonials">
-        <div class="container">
-            <h2 class="section-title">Відгуки Клієнтів</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <div class="testimonial-text">
-                        "Pro Jet допомогла нам замовити 500 брелків за 3 дні! Якість на найвищому рівні. Рекомендуємо!"
-                    </div>
-                    <div class="testimonial-author">Максим І.</div>
-                    <div class="testimonial-position">ТОВ "Маркетинг Плюс"</div>
-                </div>
-
-                <div class="testimonial">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <div class="testimonial-text">
-                        "Прекрасна робота з дизайном. Команда була дуже уважна до деталей і швидко виправила все, що просили."
-                    </div>
-                    <div class="testimonial-author">Ольга К.</div>
-                    <div class="testimonial-position">Директор "Café 27"</div>
-                </div>
-
-                <div class="testimonial">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <div class="testimonial-text">
-                        "Займаємося орендуванням брендованої продукції від Pro Jet. Відмінна якість за розумними цінами!"
-                    </div>
-                    <div class="testimonial-author">Петро Л.</div>
-                    <div class="testimonial-position">Event Manager</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- КОНТАКТИ -->
+    <!-- CONTACT -->
     <section id="contact" class="contact">
         <div class="container">
             <h2 class="section-title">Зв'яжіться з Нами</h2>
@@ -903,15 +654,15 @@
                     </div>
                     <div class="contact-item">
                         <strong>📱 Телефон:</strong>
-                        <a href="tel:+380671234567" style="color: var(--primary);">+38 (067) 123-45-67</a>
+                        <a href="tel:+380671234567">+38 (067) 123-45-67</a>
                     </div>
                     <div class="contact-item">
                         <strong>📧 Email:</strong>
-                        <a href="mailto:info@projet.ua" style="color: var(--primary);">info@projet.ua</a>
+                        <a href="mailto:info@projet.ua">info@projet.ua</a>
                     </div>
                     <div class="contact-item">
                         <strong>🌐 Сайт:</strong>
-                        <a href="https://projet.ua" style="color: var(--primary);">projet.ua</a>
+                        <a href="https://projet.ua">projet.ua</a>
                     </div>
                     <div class="contact-item">
                         <strong>⏰ Режим роботи:</strong>
@@ -932,7 +683,7 @@
         </div>
     </section>
 
-    <!-- ФУТЕР -->
+    <!-- FOOTER -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -942,7 +693,6 @@
                     <div class="social-links">
                         <a href="#" title="Facebook">f</a>
                         <a href="#" title="Instagram">📷</a>
-                        <a href="#" title="LinkedIn">in</a>
                         <a href="#" title="Telegram">✈️</a>
                     </div>
                 </div>
@@ -953,7 +703,7 @@
                         <li><a href="#services">Гравіювання</a></li>
                         <li><a href="#services">Порізка</a></li>
                         <li><a href="#services">Брендування</a></li>
-                        <li><a href="#services">Консультація</a></li>
+                        <li><a href="#contact">Контакти</a></li>
                     </ul>
                 </div>
 
@@ -961,9 +711,9 @@
                     <h4>Компанія</h4>
                     <ul>
                         <li><a href="#">Про нас</a></li>
-                        <li><a href="#">Портфоліо</a></li>
+                        <li><a href="#services">Послуги</a></li>
                         <li><a href="#">Блог</a></li>
-                        <li><a href="#">Контакти</a></li>
+                        <li><a href="#contact">Контакти</a></li>
                     </ul>
                 </div>
 
@@ -978,17 +728,45 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 Pro Jet. Усі права захищені. | <a href="#" style="color: rgba(255,255,255,0.7);">Політика Конфіденційності</a></p>
+                <p>&copy; 2025 Pro Jet. Усі права захищені.</p>
             </div>
         </div>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <!-- КАЛЬКУЛЯТОР JAVASCRIPT -->
+    <script>
         function calculatePrice() {
-            const material = parseFloat(document.getElementById('material').value);
-            const size = parseFloat(document.getElementById('size').value) || 1;
+            const material = parseFloat(document.getElementById('material').value) || 100;
+            const size = parseFloat(document.getElementById('size').value) || 100;
             const quantity = parseInt(document.getElementById('quantity').value) || 1;
-            const complexity = parseFloat(document.getElementById('complexity').value);
+            const complexity = parseFloat(document.getElementById('complexity').value) || 1;
 
-            const basePrice = material * (size / 100) * complexity;
-            c
+            // Базова вартість = матеріал * (розмір / 100) * складність
+            let basePrice = material * (size / 100) * complexity;
+            
+            // Скидка за кількість
+            let discount = 0;
+            if (quantity >= 100) discount = 0.30;
+            else if (quantity >= 50) discount = 0.25;
+            else if (quantity >= 20) discount = 0.15;
+            else if (quantity >= 10) discount = 0.10;
+            
+            // Загальна вартість за всі копії
+            let totalPrice = basePrice * quantity * (1 - discount);
+            
+            // Форматування результату
+            const result = Math.round(totalPrice);
+            let displayText = result.toLocaleString('uk-UA') + ' грн';
+            
+            if (discount > 0) {
+                displayText += ' (-' + Math.round(discount * 100) + '%)';
+            }
+            
+            document.getElementById('price').textContent = displayText;
+        }
+        
+        // Розрахувати при завантаженні сторінки
+        window.addEventListener('load', calculatePrice);
+    </script>
+</body>
+</html>
