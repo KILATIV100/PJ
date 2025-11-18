@@ -48,11 +48,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
+            padding: 12px 0;
         }
 
         .logo {
-            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-size: 20px;
             font-weight: 700;
             color: var(--primary);
             font-family: 'Montserrat', sans-serif;
@@ -188,6 +206,58 @@
             color: var(--dark-gray);
         }
 
+        /* SERVICES */
+        .services {
+            padding: 80px 0;
+            background: var(--light-gray);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(29, 180, 179, 0.15);
+        }
+
+        .service-icon { font-size: 40px; margin-bottom: 15px; }
+
+        .service-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         /* CALCULATOR */
         .calculator {
             padding: 80px 0;
@@ -222,196 +292,53 @@
         .calc-form input,
         .calc-form select {
             padding: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: none;
             border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-            color: white;
             font-size: 14px;
-            font-family: inherit;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
         }
 
         .calc-form input::placeholder {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .calc-form input:focus,
         .calc-form select:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px var(--primary);
         }
 
-        .calc-calc {
-            background: var(--primary);
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
+        .calc-form select {
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .calc-calc:hover {
-            background: #16a39d;
-            transform: translateY(-2px);
         }
 
         .calc-result {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05);
             padding: 30px;
             border-radius: 8px;
-            border: 1px solid rgba(29, 180, 179, 0.3);
-            color: white;
+            border: 1px solid var(--primary);
         }
 
         .calc-result h3 {
-            font-size: 16px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
             margin-bottom: 15px;
-            color: rgba(255,255,255,0.8);
         }
 
         .calc-price {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 20px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .calc-result > div:last-child {
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-            line-height: 1.8;
-        }
-
-        /* SERVICES */
-        .services {
-            padding: 80px 0;
-            background: var(--light-gray);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .service-card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .service-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .service-card h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 12px;
-        }
-
-        .service-card p {
-            font-size: 14px;
-            color: var(--dark-gray);
-            margin-bottom: 15px;
-        }
-
-        .price-badge {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* FOOTER */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 50px 0 20px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .footer-section h4 {
-            font-family: 'Montserrat', sans-serif;
-            margin-bottom: 15px;
-            color: white;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-section a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: var(--primary);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: rgba(29, 180, 179, 0.2);
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
         }
 
         /* CONTACT */
         .contact {
             padding: 80px 0;
-            background: var(--white);
+            background: white;
         }
 
         .contact-content {
@@ -427,28 +354,26 @@
 
         .contact-info h3 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--dark);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .contact-item {
             margin-bottom: 20px;
             font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .contact-item strong {
-            color: var(--dark);
+            color: var(--dark-gray);
         }
 
         .contact-item a {
             color: var(--primary);
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .contact-item a:hover {
+            color: var(--dark);
             text-decoration: underline;
         }
 
@@ -461,10 +386,11 @@
         .contact-form input,
         .contact-form textarea {
             padding: 12px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #f0f0f0;
             border-radius: 4px;
-            font-family: inherit;
             font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
         }
 
         .contact-form input:focus,
@@ -475,8 +401,8 @@
         }
 
         .contact-form textarea {
-            min-height: 150px;
             resize: vertical;
+            min-height: 120px;
         }
 
         .contact-form button {
@@ -486,6 +412,7 @@
             border: none;
             border-radius: 4px;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -493,13 +420,97 @@
         .contact-form button:hover {
             background: var(--dark);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(29, 180, 179, 0.3);
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .section-title { font-size: 28px; }
-            nav { display: none; }
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(29, 180, 179, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-status {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .form-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .form-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
         }
     </style>
 </head>
@@ -508,13 +519,33 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">🚀 Pro Jet</div>
+                <a href="#" class="logo">
+                    <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 283.46 283.46">
+                        <defs>
+                            <style>
+                                .logo-dark { fill: #081b26; }
+                                .logo-primary { fill: #1db4b3; }
+                                .logo-none { fill: none; }
+                            </style>
+                        </defs>
+                        <path class="logo-dark" d="M165.38,84.75c-1.16-3.69-2.59-7.22-4.29-10.6-11.02-22.01-32.92-36.99-58.11-36.99H18.2v209.15l43.86-37.12,5.55-4.7v-120.05h31.41c11.95,0,21.66,11.12,21.66,24.83s-9.71,24.81-21.66,24.81h-21.66v41.97h25.62c3.99,0,7.9-.36,11.7-1.1,26.61-5.05,47.65-27,52.8-54.98.8-4.32,1.22-8.79,1.22-13.36v-.62c-.06-7.42-1.22-14.56-3.32-21.24ZM42.22,119.81c-.29,0-.58,0-.87-.02-1.02-.06-2.05-.23-3.01-.48v-.02c-6.35-1.7-11.03-7.51-11.03-14.38s5.02-13.09,11.74-14.54c1.02-.23,2.09-.35,3.17-.35,1.35,0,2.66.17,3.92.52,6.31,1.72,10.96,7.49,10.96,14.37,0,8.22-6.66,14.9-14.88,14.9ZM143.1,89.79c8.22,0,14.88,6.66,14.88,14.89,0,1.37-.19,2.7-.54,3.95-1.71,6.3-7.49,10.93-14.34,10.93-2.3,0-4.48-.52-6.43-1.45-5-2.39-8.48-7.51-8.48-13.43,0-8.23,6.68-14.89,14.91-14.89Z"/>
+                        <path class="logo-primary" d="M157.98,104.68c0,1.37-.19,2.7-.54,3.95-1.71,6.3-7.49,10.93-14.34,10.93-2.3,0-4.48-.52-6.43-1.45-5-2.39-8.48-7.51-8.48-13.43,0-8.23,6.68-14.89,14.91-14.89s14.88,6.66,14.88,14.89Z"/>
+                        <path class="logo-dark" d="M265.32,37.16l-46.73,39.55v98.21c0,14.73-15.93,26.66-35.54,26.66-.56,0-1.11,0-1.66-.03-18.87-.65-33.89-12.32-33.89-26.63,0-1.26.12-2.51.35-3.73-11.22,9.4-25.39,15.02-40.82,15.02-1.06,0-2.1-.02-3.14-.08,3.57,20.86,17.58,38.75,37.23,49.5,12.51,6.86,27.32,10.82,43.18,10.82,31.38,0,58.6-15.49,72.17-38.15,5.87-9.79,9.17-20.93,9.17-32.75V37.16h-.32ZM193.98,233.74c-1.58,2.1-3.69,3.78-6.14,4.82-.44.19-.9.35-1.37.5-1.4.43-2.89.67-4.43.67-4.11,0-7.83-1.67-10.52-4.37-.21-.21-.41-.43-.61-.65-.2-.22-.39-.45-.58-.69-.18-.23-.36-.47-.53-.72-.17-.24-.34-.5-.49-.75-.13-.21-.25-.42-.36-.63-.17-.32-.33-.64-.48-.97-.15-.33-.29-.66-.41-1-.22-.6-.41-1.22-.54-1.85-.05-.21-.09-.43-.13-.64-.04-.21-.07-.43-.1-.65-.03-.22-.05-.43-.07-.65-.02-.22-.04-.45-.05-.67-.01-.22-.01-.45-.01-.67,0-.32.01-.64.03-.96.02-.31.05-.63.09-.94.12-.93.32-1.83.6-2.7.1-.29.2-.58.31-.86s.23-.56.36-.83c.12-.27.26-.54.4-.8.11-.21.23-.43.36-.64.16-.25.32-.5.49-.75.17-.24.35-.48.53-.71.74-.93,1.59-1.78,2.52-2.52.23-.18.47-.36.71-.53.25-.17.5-.33.75-.49.21-.13.43-.25.64-.36.26-.14.53-.28.8-.4.27-.13.55-.25.83-.36.28-.11.57-.21.86-.31.87-.28,1.77-.48,2.7-.6.31-.04.63-.07.94-.09.32-.02.64-.03.96-.03.22,0,.45,0,.67.01.22,0,.45.03.67.05.22.02.43.04.65.07.22.03.44.06.65.1s.43.08.64.13c.63.13,1.25.32,1.85.54.34.12.67.26,1,.41.33.15.65.31.97.48.21.12.42.23.62.36.08.04.16.09.24.15.16.1.32.2.48.31.39.26.76.55,1.12.86.16.12.31.25.45.39.18.16.35.32.52.49.17.16.34.34.49.52.16.17.31.34.44.51.36.41.68.85.97,1.3.09.11.16.23.23.34.08.13.15.25.22.38.17.28.33.57.47.86.04.08.08.16.12.24.07.15.14.31.2.46.12.27.23.53.33.8.08.23.16.45.23.69.08.23.14.46.2.7.07.24.12.48.17.72.2.97.31,1.98.31,3.01,0,3.35-1.1,6.44-2.97,8.92Z"/>
+                        <path class="logo-none" d="M196.94,224.82c0,8.22-6.68,14.91-14.91,14.91s-14.89-6.68-14.89-14.91,6.66-14.89,14.89-14.89,14.91,6.66,14.91,14.89Z"/>
+                        <path class="logo-primary" d="M57.1,104.91c0,8.22-6.66,14.9-14.88,14.9-.29,0-.58,0-.87-.02-1.02-.06-2.05-.23-3.01-.48v-.02c-6.35-1.7-11.03-7.51-11.03-14.38s5.02-13.09,11.74-14.54c1.02-.23,2.09-.35,3.17-.35,1.35,0,2.66.17,3.92.52,6.31,1.72,10.96,7.49,10.96,14.37Z"/>
+                        <path class="logo-primary" d="M196.94,224.82c0,8.22-6.68,14.91-14.91,14.91s-14.89-6.68-14.89-14.91,6.66-14.89,14.89-14.89,14.91,6.66,14.91,14.89Z"/>
+                    </svg>
+                    <span class="logo-text">Pro Jet</span>
+                </a>
+
                 <nav>
+                    <a href="#advantages">Переваги</a>
                     <a href="#services">Послуги</a>
                     <a href="#calculator">Калькулятор</a>
                     <a href="#contact">Контакти</a>
-                    <a href="#contact" class="cta-button">Замовити</a>
                 </nav>
+
+                <a href="#contact" class="cta-button">Замовити</a>
             </div>
         </div>
     </header>
@@ -522,20 +553,25 @@
     <!-- HERO -->
     <section class="hero">
         <div class="container">
-            <h1>Лазерне <span>Гравіювання</span> та <span>Порізка</span></h1>
-            <p>Професійні послуги для вашого бренду. Швидкість, якість, ціна!</p>
+            <h1>Лазерне <span>Гравіювання</span> та Порізка</h1>
+            <p>Професійні послуги для вашого бренду. Найвища якість, найкращі ціни, найшвидша обробка.</p>
             <div class="hero-buttons">
-                <a href="#calculator" class="cta-button">Розрахувати ціну</a>
-                <a href="#contact" class="cta-button btn-secondary">Замовити</a>
+                <a href="#calculator" class="cta-button">Розрахувати вартість</a>
+                <a href="#contact" class="cta-button btn-secondary">Зв'язатися з нами</a>
             </div>
         </div>
     </section>
 
     <!-- ADVANTAGES -->
-    <section class="advantages">
+    <section id="advantages" class="advantages">
         <div class="container">
-            <h2 class="section-title">Чому Обирають Pro Jet?</h2>
+            <h2 class="section-title">Чому обирають Pro Jet?</h2>
             <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">💰</div>
+                    <h3>Ціна</h3>
+                    <p>Максимальна вигода. Абсолютна прозорість. Ми гарантуємо повний і чесний розрахунок без схованих зборів.</p>
+                </div>
                 <div class="advantage-card">
                     <div class="advantage-icon">⚡</div>
                     <h3>Швидкість</h3>
@@ -545,11 +581,6 @@
                     <div class="advantage-icon">💎</div>
                     <h3>Якість</h3>
                     <p>Професійна обробка кожного виробу. Бездоганний результат.</p>
-                </div>
-                <div class="advantage-card">
-                    <div class="advantage-icon">💰</div>
-                    <h3>Ціни</h3>
-                    <p>Найвигідніші на ринку. Прозорі розрахунки без схованих збирань.</p>
                 </div>
                 <div class="advantage-card">
                     <div class="advantage-icon">🎯</div>
@@ -564,7 +595,7 @@
                 <div class="advantage-card">
                     <div class="advantage-icon">📱</div>
                     <h3>Зручність</h3>
-                    <p>Замовляйте онлайн. Консультація бісплатна.</p>
+                    <p>Замовляйте онлайн. Консультація безкоштовна.</p>
                 </div>
             </div>
         </div>
@@ -605,6 +636,7 @@
                 <div class="calc-form">
                     <label>Виберіть матеріал:</label>
                     <select id="material" onchange="calculatePrice()">
+                        <option value="80">Картон для взуття «Тексон» (від 80 грн)</option>
                         <option value="100">Дерево (від 100 грн)</option>
                         <option value="150">Акрил (від 150 грн)</option>
                         <option value="120">Пластик (від 120 грн)</option>
@@ -649,34 +681,35 @@
                 <div class="contact-info">
                     <h3>Pro Jet</h3>
                     <div class="contact-item">
-                        <strong>📍 Адреса:</strong>
-                        м. Броварі, Київська область
+                        <strong>📍 Адреса:</strong><br>
+                        м. Бровари, Київська область
                     </div>
                     <div class="contact-item">
-                        <strong>📱 Телефон:</strong>
-                        <a href="tel:+380671234567">+38 (067) 123-45-67</a>
+                        <strong>📱 Телефон:</strong><br>
+                        <a href="tel:+380676170619">+38 (067) 617-06-19</a>
                     </div>
                     <div class="contact-item">
-                        <strong>📧 Email:</strong>
-                        <a href="mailto:info@projet.ua">info@projet.ua</a>
+                        <strong>📧 Email:</strong><br>
+                        <a href="mailto:kilativ100@gmail.com">kilativ100@gmail.com</a>
                     </div>
                     <div class="contact-item">
-                        <strong>🌐 Сайт:</strong>
-                        <a href="https://projet.ua">projet.ua</a>
+                        <strong>🌐 Сайт:</strong><br>
+                        <a href="https://proletbrovary.netlify.app">https://proletbrovary.netlify.app</a>
                     </div>
                     <div class="contact-item">
-                        <strong>⏰ Режим роботи:</strong>
+                        <strong>⏰ Режим роботи:</strong><br>
                         Пн-Пт: 09:00-18:00<br>
-                        Сб: 10:00-15:00
+                        Сб: 10:00-18:00
                     </div>
                 </div>
 
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('Спасибо за сообщение! Мы вам обязательно ответим.');">
-                    <input type="text" placeholder="Ваше ім'я" required>
-                    <input type="email" placeholder="Ваш email" required>
-                    <input type="tel" placeholder="Ваш телефон" required>
-                    <input type="text" placeholder="Тема">
-                    <textarea placeholder="Ваше повідомлення" required></textarea>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-status" id="formStatus"></div>
+                    <input type="text" id="name" placeholder="Ваше ім'я" required>
+                    <input type="email" id="email" placeholder="Ваш email" required>
+                    <input type="tel" id="phone" placeholder="Ваш телефон" required>
+                    <input type="text" id="subject" placeholder="Тема">
+                    <textarea id="message" placeholder="Ваше повідомлення" required></textarea>
                     <button type="submit">Відправити</button>
                 </form>
             </div>
@@ -720,9 +753,9 @@
                 <div class="footer-section">
                     <h4>Контакти</h4>
                     <ul>
-                        <li><a href="tel:+380671234567">+38 (067) 123-45-67</a></li>
-                        <li><a href="mailto:info@projet.ua">info@projet.ua</a></li>
-                        <li><a href="#">м. Броварі, Київ. обл.</a></li>
+                        <li><a href="tel:+380676170619">+38 (067) 617-06-19</a></li>
+                        <li><a href="mailto:kilativ100@gmail.com">kilativ100@gmail.com</a></li>
+                        <li><a href="#">м. Бровари, Київ. обл.</a></li>
                     </ul>
                 </div>
             </div>
@@ -733,8 +766,9 @@
         </div>
     </footer>
 
-    <!-- КАЛЬКУЛЯТОР JAVASCRIPT -->
+    <!-- JAVASCRIPT -->
     <script>
+        // Калькулятор вартості
         function calculatePrice() {
             const material = parseFloat(document.getElementById('material').value) || 100;
             const size = parseFloat(document.getElementById('size').value) || 100;
@@ -759,14 +793,88 @@
             let displayText = result.toLocaleString('uk-UA') + ' грн';
             
             if (discount > 0) {
-                displayText += ' (-' + Math.round(discount * 100) + '%)';
+                displayText += ` <span style="font-size: 14px; color: rgba(255,255,255,0.7);">(-${Math.round(discount * 100)}%)</span>`;
             }
             
-            document.getElementById('price').textContent = displayText;
+            document.getElementById('price').innerHTML = displayText;
         }
-        
-        // Розрахувати при завантаженні сторінки
+
+        // Ініціалізація калькулятора при завантаженні
         window.addEventListener('load', calculatePrice);
+
+        // Обробка форми контактів
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formStatus = document.getElementById('formStatus');
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Валідація
+            if (!name || !email || !phone || !message) {
+                formStatus.className = 'form-status error';
+                formStatus.textContent = 'Будь ласка, заповніть усі обов\'язкові поля!';
+                return;
+            }
+
+            try {
+                // Відправка повідомлення на email через FormSubmit
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('phone', phone);
+                formData.append('subject', subject || 'Без теми');
+                formData.append('message', message);
+
+                // Використання FormSubmit.co для відправки email
+                const response = await fetch('https://formsubmit.co/kilativ100@gmail.com', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    formStatus.className = 'form-status success';
+                    formStatus.textContent = '✅ Спасибо за повідомлення! Ми вам обов\'язково ответимо найближче часом.';
+                    
+                    // Очищення форми
+                    document.getElementById('contactForm').reset();
+                    
+                    // Приховання повідомлення через 5 секунд
+                    setTimeout(() => {
+                        formStatus.className = 'form-status';
+                    }, 5000);
+                } else {
+                    throw new Error('Помилка при відправці');
+                }
+            } catch (error) {
+                formStatus.className = 'form-status error';
+                formStatus.textContent = '❌ Помилка при відправці! Спробуйте пізніше або зв\'яжіться з нами напряму.';
+                
+                // Альтернативний спосіб - через локальну функцію (якщо є серверна частина)
+                console.error('Error:', error);
+                
+                // Показуємо інформацію про ручну відправку
+                setTimeout(() => {
+                    alert(`Помилка при відправці через форму. Контактні дані:\nТелефон: +38 (067) 617-06-19\nEmail: kilativ100@gmail.com`);
+                }, 1000);
+            }
+        });
+
+        // Гладке прокручування до якорів
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
