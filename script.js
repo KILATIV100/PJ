@@ -1,10 +1,10 @@
 /* ============================================
    PRO JET - СКРИПТИ (JavaScript)
-   Оновлено: Інтеграція бізнес-логіки калькуляторів
+   Оновлено: ФІКСОВАНА ЦІНА ЗА ПРОДУКТ ДЛЯ ГРАВІЮВАННЯ
    ============================================ */
 
 // ============================================
-// МОБІЛЬНЕ МЕНЮ
+// МОБІЛЬНЕ МЕНЮ ТА ІНІЦІАЛІЗАЦІЯ
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nav.classList.toggle('active');
     });
 
-    // Закрити меню при клацанні на посилання
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
             menuToggle.classList.remove('active');
@@ -24,10 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Ініціалізація каруселі
     initCarousel();
-
-    // Ініціалізація форми контактів
     setupContactForm();
 });
 
@@ -42,7 +38,6 @@ function setupContactForm() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Отримуємо дані форми
         const formData = new FormData(this);
         const data = {
             name: formData.get('name'),
@@ -55,7 +50,6 @@ function setupContactForm() {
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.textContent;
 
-        // Покажемо статус загрузки
         submitBtn.disabled = true;
         submitBtn.textContent = 'Відправлення...';
         statusDiv.innerHTML = '';
@@ -65,9 +59,7 @@ function setupContactForm() {
             // !!! Змініть 'https://formspree.io/f/xyzqwert' на вашу реальну кінцеву точку Formspree або інший бекенд !!!
             const response = await fetch('https://formspree.io/f/xyzqwert', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: data.name,
                     email: data.email,
@@ -78,30 +70,19 @@ function setupContactForm() {
             });
 
             if (response.ok) {
-                // Успіх!
                 statusDiv.className = 'form-status success';
                 statusDiv.innerHTML = '✅ Спасибі! Ваша заявка відправлена. Ми зв\'яжемось з вами найближчим часом.';
-                
-                // Очищуємо форму
                 form.reset();
-                
-                // Приховуємо статус через 5 секунд
-                setTimeout(() => {
-                    statusDiv.innerHTML = '';
-                }, 5000);
+                setTimeout(() => { statusDiv.innerHTML = ''; }, 5000);
             } else {
-                // Помилка від сервера
                 statusDiv.className = 'form-status error';
                 statusDiv.innerHTML = '❌ Помилка відправки. Спробуйте ще раз.';
             }
         } catch (error) {
             console.error('Помилка:', error);
-            
-            // Якщо помилка з мережею, показуємо альтернативне повідомлення
             statusDiv.className = 'form-status error';
             statusDiv.innerHTML = '❌ Помилка з\'єднання. Напишіть нам на kilativ100@gmail.com або позвоніть +38 (067) 617-06-19';
         } finally {
-            // Повертаємо кнопку в нормальний стан
             submitBtn.disabled = false;
             submitBtn.textContent = originalBtnText;
         }
@@ -109,7 +90,7 @@ function setupContactForm() {
 }
 
 // ============================================
-// КАРУСЕЛЬ
+// КАРУСЕЛЬ (ЛОГІКА ЗАЛИШАЄТЬСЯ)
 // ============================================
 
 let currentSlide = 0;
@@ -117,11 +98,9 @@ let totalSlides = 6;
 let autoplayInterval;
 
 function initCarousel() {
-    // Перевірка, чи існує трек каруселі
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
-    // Оновлюємо totalSlides, якщо слайдів більше
     const slides = track.querySelectorAll('.carousel-slide');
     if (slides.length > 0) {
         totalSlides = slides.length;
@@ -131,7 +110,6 @@ function initCarousel() {
     updateCarousel();
     startAutoplay();
     
-    // Слухачі для кнопок
     document.getElementById('prevBtn').addEventListener('click', prevSlide);
     document.getElementById('nextBtn').addEventListener('click', nextSlide);
 }
@@ -140,7 +118,6 @@ function createIndicators() {
     const indicatorsContainer = document.getElementById('indicators');
     if (!indicatorsContainer) return;
 
-    // Очистити існуючі індикатори
     indicatorsContainer.innerHTML = ''; 
 
     for (let i = 0; i < totalSlides; i++) {
@@ -156,14 +133,11 @@ function updateCarousel() {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
-    // Визначення ширини слайду
     const slideWidth = track.firstElementChild ? track.firstElementChild.offsetWidth : 0;
-    const gap = 20; // Дивіться styles.css .carousel-track gap
+    const gap = 20; 
 
-    // Встановлення позиції
     track.style.transform = `translateX(-${currentSlide * (slideWidth + gap)}px)`;
     
-    // Оновити індикатори
     document.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
         ind.classList.toggle('active', i === currentSlide);
     });
@@ -188,9 +162,7 @@ function goToSlide(n) {
 }
 
 function startAutoplay() {
-    autoplayInterval = setInterval(() => {
-        nextSlide();
-    }, 4000); // 4 секунди
+    autoplayInterval = setInterval(() => { nextSlide(); }, 4000); 
 }
 
 function resetAutoplay() {
@@ -204,8 +176,7 @@ function resetAutoplay() {
 // ============================================
 
 // ============================================
-// ТАБЛИЦІ МАТЕРІАЛІВ ДЛЯ ГРАВІЮВАННЯ (за мм²)
-// [Матеріал]: { T_100_MM2: час_1мм2_100%_заповн (хв/мм²), C_MARZH: маржа_за_1мм2 (грн/мм²) }
+// ТАБЛИЦІ МАТЕРІАЛІВ ДЛЯ ГРАВІЮВАННЯ (для розрахунку ЧАСУ)
 // ============================================
 const engravingMaterials = {
     plywood: { name: 'Фанера', T_100_MM2: 0.0002, C_MARZH: 0.0005 },
@@ -216,8 +187,18 @@ const engravingMaterials = {
 };
 
 // ============================================
-// ТАБЛИЦІ МАТЕРІАЛІВ ДЛЯ РІЗАННЯ (за метри)
-// [Матеріал-Товщина]: { T_RIZU: час_різання_1м (хв/м), C_MARZH: маржа_за_1м (грн/м) }
+// ФІКСОВАНА ВАРТІСТЬ ЗА ОДИНИЦЮ ГРАВІЮВАННЯ
+// [Площа в мм², Складність (%), Базова ціна за 1 шт (грн), Опис]
+// ============================================
+const engravingFixedPrices = {
+    S_Low: [2500, 30, 60.00, 'S - Малий логотип (до 25 см²)'],   
+    M_Avg: [10000, 50, 120.00, 'M - Етикетка/Напис (до 100 см²)'], 
+    L_High: [40000, 80, 250.00, 'L - Повна графіка/Зображення (до 400 см²)'],
+};
+
+
+// ============================================
+// ТАБЛИЦІ МАТЕРІАЛІВ ДЛЯ РІЗАННЯ
 // ============================================
 const cuttingMaterials = {
     plywood3: { name: 'Фанера 3.0 мм', T_RIZU: 8.33, C_MARZH: 8.00 },
@@ -233,13 +214,13 @@ const cuttingMaterials = {
 // ============================================
 
 const generalConstants = {
-    Ctime: 0.83,      // грн/хв (C_CHAS)
+    Ctime: 0.83,      // грн/хв (C_CHAS) - Залишаємо для різання
     Cmin: 150.0,      // грн (Мінімальне замовлення)
     Kopt: 15,         // % знижка за великі обсяги
 };
 
 const engravingConstants = {
-    optimalArea: 100000, // мм² для застосування знижки (1000 см²)
+    optimalQuantity: 1000, // Кількість об'єктів для застосування знижки
 };
 
 const cuttingConstants = {
@@ -276,58 +257,51 @@ function formatTime(minutes) {
 }
 
 function formatArea(mm2) {
-    if (mm2 < 10000) {
-        return mm2.toFixed(0) + ' мм²';
-    }
     const cm2 = mm2 / 100;
     return cm2.toFixed(0) + ' см²';
 }
 
 
 // ============================================
-// КАЛЬКУЛЯТОР ГРАВІЮВАННЯ
+// КАЛЬКУЛЯТОР ГРАВІЮВАННЯ (НОВА ФІКСОВАНА ЛОГІКА)
 // ============================================
 
 function calculateEngraving() {
     const materialValue = document.getElementById('engMaterial').value;
-    const area = parseFloat(document.getElementById('engArea').value); // мм²
-    const complexity = parseFloat(document.getElementById('engComplexity').value);
-
-    // Валідація
-    if (!materialValue || !area || area <= 0 || !complexity) {
+    const productValue = document.getElementById('engProduct').value;
+    const quantity = parseInt(document.getElementById('engQuantity').value); 
+    
+    if (!materialValue || !productValue || !quantity || quantity <= 0) {
         alert('Будь ласка, заповніть усі поля коректно');
         return;
     }
 
     const material = engravingMaterials[materialValue];
+    const productDetails = engravingFixedPrices[productValue]; 
     
-    // Крок 1: Розрахунок часу гравіювання (в хвилинах)
-    // T_заг = Площа × T_100_MM2 × (Складність / 100)
-    const Ttotal = area * material.T_100_MM2 * (complexity / 100);
+    const area_mm2 = productDetails[0];
+    const complexity = productDetails[1];
+    const basePricePerUnit = productDetails[2]; 
+    const productText = productDetails[3];
 
-    // Крок 2: Собівартість за часом
-    // C_собіварт = C_час × T_заг
-    const Ccost = generalConstants.Ctime * Ttotal;
+    // Крок 1: Розрахунок часу (для інформації)
+    const T_per_unit = area_mm2 * material.T_100_MM2 * (complexity / 100);
+    const Ttotal = T_per_unit * quantity;
 
-    // Крок 3: Розрахунок маржі
-    // C_марж_заг = C_МАРЖ × Площа
-    const Cmargin_total = material.C_MARZH * area;
+    // Крок 2: Загальна попередня вартість 
+    const Cpreliminary = basePricePerUnit * quantity;
 
-    // Крок 4: Загальна попередня вартість
-    // C_поперед = C_собіварт + C_марж_заг
-    const Cpreliminary = Ccost + Cmargin_total;
-
-    // Крок 5: Перевірка мінімуму
+    // Крок 3: Перевірка мінімуму
     let Cfinal = Cpreliminary;
     const minOrderApplied = (Cpreliminary < generalConstants.Cmin);
     if (minOrderApplied) {
         Cfinal = generalConstants.Cmin;
     }
 
-    // Крок 6: Застосування знижки
+    // Крок 4: Застосування знижки (за кількість)
     let Cfinal_result = Cfinal;
     let discount = 0;
-    if (area >= engravingConstants.optimalArea) {
+    if (quantity >= engravingConstants.optimalQuantity) { 
         discount = Cfinal * (generalConstants.Kopt / 100);
         Cfinal_result = Cfinal - discount;
     }
@@ -336,11 +310,13 @@ function calculateEngraving() {
     const resultDiv = document.getElementById('engravingResult');
     
     document.getElementById('resultEngMaterial').textContent = material.name;
-    document.getElementById('resultEngArea').textContent = formatArea(area) + ` (${complexity}% заповнення)`;
+    document.getElementById('resultEngArea').textContent = `${productText} (Кількість ${quantity} шт.)`;
     document.getElementById('resultEngTime').textContent = formatTime(Ttotal);
     
-    // Додаємо інформацію про знижку, якщо вона є
-    let finalNote = `* Мінімальне замовлення: ${formatCurrency(generalConstants.Cmin)}. `;
+    document.getElementById('resultEngTotal').textContent = formatCurrency(Cfinal_result);
+    
+    // Формування примітки
+    let finalNote = `* Вартість 1 шт (базова): ${formatCurrency(basePricePerUnit)}. `;
     if (minOrderApplied) {
         finalNote = `*** Застосовано мінімальне замовлення ${formatCurrency(generalConstants.Cmin)}. Попередня вартість: ${formatCurrency(Cpreliminary)}.`;
     }
@@ -348,14 +324,9 @@ function calculateEngraving() {
         finalNote += ` *** Застосовано оптову знижку ${generalConstants.Kopt}% (${formatCurrency(discount)}).`;
     }
     
-    // Вартість за мм2 - покажемо лише маржу (як в оригінальній логіці)
-    document.getElementById('resultEngUnitPrice').textContent = formatCurrency(material.C_MARZH) + ' / мм²'; 
-    document.getElementById('resultEngTotal').textContent = formatCurrency(Cfinal_result);
     resultDiv.querySelector('.calc-note').innerHTML = finalNote;
-    
     resultDiv.style.display = 'block';
     
-    // Скролл до результату
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
@@ -368,7 +339,6 @@ function calculateCutting() {
     const length = parseFloat(document.getElementById('cutLength').value);
     const details = parseInt(document.getElementById('cutDetails').value);
 
-    // Валідація
     if (!materialValue || !length || length <= 0) {
         alert('Будь ласка, заповніть усі поля коректно');
         return;
@@ -380,19 +350,15 @@ function calculateCutting() {
     const Ttotal = material.T_RIZU * length;
 
     // Крок 2: Базова вартість 1 метра (Собівартість + Маржа)
-    // C_базова = (C_час × T_різу) + C_марж
     const Cbase = (generalConstants.Ctime * material.T_RIZU) + material.C_MARZH;
 
     // Крок 3: Вартість різання за довжину
-    // C_різ = C_базова × Довжина різу
     const Ccut = Cbase * length;
 
     // Крок 4: Вартість штрафу за деталі
-    // C_штраф = C_др × Кількість отворів/об'єктів
     const Cpenalty = cuttingConstants.Cdetail * details;
 
     // Крок 5: Загальна попередня вартість
-    // C_поперед = C_різ + C_штраф
     const Cpreliminary = Ccut + Cpenalty;
 
     // Крок 6: Перевірка мінімуму
@@ -432,7 +398,6 @@ function calculateCutting() {
 
     resultDiv.style.display = 'block';
     
-    // Скролл до результату
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
@@ -441,7 +406,7 @@ function calculateCutting() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Обробка клавіші Enter у формах
+    
     if (document.getElementById('engravingForm')) {
         document.getElementById('engravingForm').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -460,8 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Видалення результату при зміні даних
-    const inputs = ['engMaterial', 'engArea', 'engComplexity', 'cutMaterial', 'cutLength', 'cutDetails'];
+    const inputs = ['engMaterial', 'engProduct', 'engQuantity', 'cutMaterial', 'cutLength', 'cutDetails'];
     inputs.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
