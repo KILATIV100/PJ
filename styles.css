@@ -761,7 +761,7 @@ body {
     gap: 15px;
 }
 
-.contact-form input,
+.contact-form input:not([type="file"]),
 .contact-form textarea {
     padding: 12px;
     border: 1px solid #ddd;
@@ -782,6 +782,48 @@ body {
     min-height: 150px;
     resize: vertical;
 }
+
+/* СТИЛІ ДЛЯ ЗАВАНТАЖЕННЯ ФАЙЛУ */
+.form-group-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.file-label {
+    display: block;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--dark-gray);
+    transition: all 0.3s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.file-label:hover {
+    border-color: var(--primary);
+}
+
+.file-label input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    font-size: 100px;
+    cursor: pointer;
+}
+
+.file-text::before {
+    content: "📎 ";
+    margin-right: 8px;
+    font-size: 16px;
+}
+
 
 /* Статус форми */
 .form-status {
@@ -824,7 +866,7 @@ body {
 }
 
 /* ============================================
-   МОБІЛЬНА ВЕРСІЯ
+   МОБІЛЬНА ВЕРСІЯ (Покращення адаптації)
    ============================================ */
 
 @media (max-width: 900px) {
@@ -912,6 +954,15 @@ body {
 
     .contact-grid {
         grid-template-columns: 1fr;
+        gap: 30px; /* Зменшуємо проміжок */
+    }
+    
+    .contact-form {
+        order: 1; /* Форма над інформацією */
+    }
+    
+    .contact-info {
+        order: 2;
     }
 
     .portfolio-item {
@@ -973,8 +1024,12 @@ body {
         font-size: 20px;
     }
 
-    .contact-form input,
+    .contact-form input:not([type="file"]),
     .contact-form textarea {
-        font-size: 16px;
+        font-size: 14px;
+    }
+    
+    .file-text {
+        font-size: 12px;
     }
 }
