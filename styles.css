@@ -13,6 +13,7 @@
     --accent: #00d9d9;
     --success: #10b981;
     --error: #ef4444;
+    --warning: #f59e0b;
 }
 
 * {
@@ -486,6 +487,94 @@ body {
 }
 
 /* ============================================
+   ТЕХНІЧНІ ВИМОГИ (НОВИЙ РОЗДІЛ)
+   ============================================ */
+
+.tech-specs {
+    padding: 80px 0;
+    background: var(--white);
+    border-top: 1px solid #eee;
+}
+
+.tech-specs h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+}
+
+.tech-card {
+    background: var(--light-gray);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tech-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+}
+
+.requirements-list {
+    list-style: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+
+.requirements-list li {
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--dark-gray);
+}
+
+.requirements-list li strong {
+    color: var(--dark);
+}
+
+/* БЛОК ПОПЕРЕДЖЕННЯ */
+.warning-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fffbef; /* Світло-жовтий фон */
+    border: 2px solid var(--warning);
+    border-radius: 4px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.warning-box h4 {
+    font-size: 16px;
+    color: var(--warning);
+    margin: 0;
+}
+
+.warning-box p {
+    font-size: 14px;
+    color: var(--dark-gray);
+    margin-top: 5px;
+}
+
+.warning-icon {
+    font-size: 24px;
+    color: var(--warning);
+}
+
+
+/* ============================================
    КАЛЬКУЛЯТОР
    ============================================ */
 
@@ -614,6 +703,7 @@ body {
     color: #999;
     margin-top: 15px;
     font-style: italic;
+    line-height: 1.5; /* Покращуємо читабельність довгих приміток */
 }
 
 /* ============================================
@@ -737,6 +827,16 @@ body {
    МОБІЛЬНА ВЕРСІЯ
    ============================================ */
 
+@media (max-width: 900px) {
+    .tech-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-card {
+        padding: 20px;
+    }
+}
+
 @media (max-width: 768px) {
     .logo-text {
         display: inline;
@@ -790,7 +890,8 @@ body {
     .services h2,
     .portfolio h2,
     .calculator h2,
-    .contact h2 {
+    .contact h2,
+    .tech-specs h2 {
         font-size: 28px;
     }
 
@@ -843,7 +944,8 @@ body {
     .services h2,
     .portfolio h2,
     .calculator h2,
-    .contact h2 {
+    .contact h2,
+    .tech-specs h2 {
         font-size: 24px;
     }
 
