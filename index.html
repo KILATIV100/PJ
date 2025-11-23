@@ -8,15 +8,31 @@
 </head>
 <body>
     <!-- ШАПКА -->
-    <header class="header">
+    <header class="header" id="top">
         <div class="container header-content">
-            <div class="logo">
-                <span class="logo-icon">🚀</span>
+            <!-- Логотип SVG -->
+            <a href="#top" class="logo">
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs>
+                        <style>
+                            .st1 { fill: #1db4b3; }
+                            .st2 { fill: #081b26; }
+                        </style>
+                    </defs>
+                    <rect width="200" height="200" fill="#FFFFFF"/>
+                    <g transform="translate(35, 35) scale(0.4)">
+                        <path class="st2" d="M165.38,84.75c-1.16-3.69-2.59-7.22-4.29-10.6-11.02-22.01-32.92-36.99-58.11-36.99H18.2v209.15l43.86-37.12,5.55-4.7v-120.05h31.41c11.95,0,21.66,11.12,21.66,24.83s-9.71,24.81-21.66,24.81h-21.66v41.97h25.62c3.99,0,7.9-.36,11.7-1.1,26.61-5.05,47.65-27,52.8-54.98.8-4.32,1.22-8.79,1.22-13.36v-.62c-.06-7.42-1.22-14.56-3.32-21.24Z"/>
+                        <path class="st1" d="M57.1,104.91c0,8.22-6.66,14.9-14.88,14.9-.29,0-.58,0-.87-.02-1.02-.06-2.05-.23-3.01-.48v-.02c-6.35-1.7-11.03-7.51-11.03-14.38s5.02-13.09,11.74-14.54c1.02-.23,2.09-.35,3.17-.35,1.35,0,2.66.17,3.92.52,6.31,1.72,10.96,7.49,10.96,14.37Z"/>
+                        <path class="st1" d="M157.98,104.68c0,1.37-.19,2.7-.54,3.95-1.71,6.3-7.49,10.93-14.34,10.93-2.3,0-4.48-.52-6.43-1.45-5-2.39-8.48-7.51-8.48-13.43,0-8.23,6.68-14.89,14.91-14.89s14.88,6.66,14.88,14.89Z"/>
+                        <path class="st2" d="M265.32,37.16l-46.73,39.55v98.21c0,14.73-15.93,26.66-35.54,26.66-.56,0-1.11,0-1.66-.03-18.87-.65-33.89-12.32-33.89-26.63,0-1.26.12-2.51.35-3.73-11.22,9.4-25.39,15.02-40.82,15.02-1.06,0-2.1-.02-3.14-.08,3.57,20.86,17.58,38.75,37.23,49.5,12.51,6.86,27.32,10.82,43.18,10.82,31.38,0,58.6-15.49,72.17-38.15,5.87-9.79,9.17-20.93,9.17-32.75V37.16h-.32Z"/>
+                        <path class="st1" d="M196.94,224.82c0,8.22-6.68,14.91-14.91,14.91s-14.89-6.68-14.89-14.91,6.66-14.89,14.89-14.89,14.91,6.66,14.91,14.89Z"/>
+                    </g>
+                </svg>
                 <span class="logo-text">Pro Jet</span>
-            </div>
+            </a>
             
             <!-- Мобільне меню кнопка -->
-            <button class="menu-toggle" id="menuToggle">
+            <button class="menu-toggle" id="menuToggle" aria-label="Меню">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -35,12 +51,92 @@
     <!-- ГЕРОЙ -->
     <section class="hero">
         <div class="container">
-            <h1>Лазерне <span class="highlight">Гравіювання</span> та <span class="highlight highlight-2">Порізка</span></h1>
+            <h1>Лазерне <span class="highlight">Гравіювання</span> та <span class="highlight highlight-cutting">Порізка</span></h1>
             <p class="hero-subtitle">Професійні послуги для вашого бренду. Швидкість, якість, ціна!</p>
             <div class="hero-buttons">
                 <a href="#engraving-calc" class="btn btn-primary">Калькулятор гравіювання</a>
                 <a href="#cutting-calc" class="btn btn-secondary">Калькулятор різання</a>
             </div>
+        </div>
+    </section>
+
+    <!-- КАРУСЕЛЬ ПРОЄКТІВ -->
+    <section class="portfolio">
+        <div class="container">
+            <h2>Портфоліо робіт</h2>
+            
+            <div class="carousel-container">
+                <button class="carousel-btn carousel-prev" id="prevBtn">❮</button>
+                
+                <div class="carousel">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Проєкт 1 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">🎁</div>
+                                <h3>Дерев'яні коробки</h3>
+                                <p>Гравіювання логотипів на подарункові коробки</p>
+                                <span class="tag">Дерево</span>
+                            </div>
+                        </div>
+
+                        <!-- Проєкт 2 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">📱</div>
+                                <h3>Пластикові чохли</h3>
+                                <p>Маркування мобільних аксесуарів</p>
+                                <span class="tag">Пластик</span>
+                            </div>
+                        </div>
+
+                        <!-- Проєкт 3 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">☕</div>
+                                <h3>Гарячі напої</h3>
+                                <p>Гравіювання на кружках та склянках</p>
+                                <span class="tag">Скло</span>
+                            </div>
+                        </div>
+
+                        <!-- Проєкт 4 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">🎖️</div>
+                                <h3>Медалі та нагороди</h3>
+                                <p>Виготовлення персоналізованих нагород</p>
+                                <span class="tag">Метал</span>
+                            </div>
+                        </div>
+
+                        <!-- Проєкт 5 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">📸</div>
+                                <h3>Фоторамки</h3>
+                                <p>Гравіювання персональних фоторамок</p>
+                                <span class="tag">Акрил</span>
+                            </div>
+                        </div>
+
+                        <!-- Проєкт 6 -->
+                        <div class="carousel-slide">
+                            <div class="portfolio-item">
+                                <div class="portfolio-icon">🔑</div>
+                                <h3>Брелки</h3>
+                                <p>Маркування сувенірних брелків</p>
+                                <span class="tag">Шкіра</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-btn carousel-next" id="nextBtn">❯</button>
+            </div>
+
+            <!-- Індикатори -->
+            <div class="carousel-indicators" id="indicators"></div>
         </div>
     </section>
 
@@ -106,9 +202,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="engArea">Площа гравіювання (см²):</label>
-                        <input type="number" id="engArea" value="100" min="1" required>
-                        <small>Розмір: Ширина × Висота в сантиметрах</small>
+                        <label for="engArea">Площа гравіювання (мм²):</label>
+                        <input type="number" id="engArea" value="10000" min="1" required>
+                        <small>Розмір: Ширина × Висота в міліметрах</small>
                     </div>
 
                     <div class="form-group">
@@ -142,7 +238,7 @@
                     </div>
 
                     <div class="result-row">
-                        <span class="result-label">Вартість за см²:</span>
+                        <span class="result-label">Вартість за мм²:</span>
                         <span class="result-value" id="resultEngUnitPrice">-</span>
                     </div>
 
