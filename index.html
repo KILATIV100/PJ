@@ -121,7 +121,7 @@
                     </div>
                 </div>
 
-                <button class="carousel-btn carousel-prev" id="prevBtn">❮</button>
+                <button class="carousel-btn carousel-next" id="nextBtn">❯</button>
             </div>
 
             <div class="carousel-indicators" id="indicators"></div>
@@ -348,22 +348,21 @@
                     <p><strong>⏰ Режим роботи:</strong><br>Пн-Пт: 09:00-18:00<br>Сб: 10:00-18:00</p>
                 </div>
 
-                <form class="contact-form" id="contactForm">
-                    <input type="text" name="name" placeholder="Ваше ім'я" required>
-                    <input type="email" name="email" placeholder="Ваш email" required>
-                    <input type="tel" name="phone" placeholder="Ваш телефон" required>
+                <div class="google-form-embed">
+                    <p style="text-align: center; color: var(--dark-gray); padding-bottom: 10px;">Будь ласка, вставте ваш код Google Form (<iframe>) сюди:</p>
                     
-                    <div class="form-group-file">
-                        <label for="upload" class="file-label">
-                            <span class="file-text">Прикріпити макет (SVG, DXF, PDF, JPG)</span>
-                            <input type="file" name="upload" id="upload" accept=".svg,.dxf,.ai,.pdf,.png,.jpg,.jpeg">
-                        </label>
-                    </div>
-
-                    <textarea name="message" placeholder="Ваше повідомлення" rows="5" required></textarea>
-                    <button type="submit" class="btn btn-primary">Відправити</button>
-                    <div class="form-status" id="formStatus"></div>
-                </form>
+                    <iframe 
+                        src="https://docs.google.com/forms/d/e/1FAIpQLScz7tX8m1D42I_PLACEHOLDER_FOR_YOUR_FORM/viewform?embedded=true" 
+                        width="100%" 
+                        height="900" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0"
+                        title="Контактна форма Pro Jet"
+                    >Завантаження…</iframe>
+                    
+                    <small style="display: block; text-align: center; margin-top: 10px; color: #666;">Щоб вбудувати форму, перейдіть в Google Forms -> "Надіслати" -> Вкладка "&lt;&gt;" (Embed HTML) -> скопіюйте код і замініть цей <iframe>.</small>
+                </div>
             </div>
         </div>
     </section>
