@@ -352,6 +352,14 @@
                     <input type="text" name="name" placeholder="Ваше ім'я" required>
                     <input type="email" name="email" placeholder="Ваш email" required>
                     <input type="tel" name="phone" placeholder="Ваш телефон" required>
+                    
+                    <div class="form-group-file">
+                        <label for="upload" class="file-label">
+                            <span class="file-text">Прикріпити макет (SVG, DXF, PDF, JPG)</span>
+                            <input type="file" name="upload" id="upload" accept=".svg,.dxf,.ai,.pdf,.png,.jpg,.jpeg">
+                        </label>
+                    </div>
+
                     <textarea name="message" placeholder="Ваше повідомлення" rows="5" required></textarea>
                     <button type="submit" class="btn btn-primary">Відправити</button>
                     <div class="form-status" id="formStatus"></div>
