@@ -33,19 +33,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupContactForm() {
     const form = document.getElementById('contactForm');
+    const fileInput = document.getElementById('upload');
+
     if (!form) return;
+    
+    // Відображення імені завантаженого файлу
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const fileName = this.files[0] ? this.files[0].name : 'Прикріпити макет (SVG, DXF, PDF, JPG)';
+            const fileTextSpan = form.querySelector('.file-text');
+            if (fileTextSpan) {
+                fileTextSpan.textContent = fileName;
+            }
+        });
+    }
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const formData = new FormData(this);
-        const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            message: formData.get('message')
-        };
-
+        
         const statusDiv = document.getElementById('formStatus');
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.textContent;
@@ -56,23 +63,25 @@ function setupContactForm() {
         statusDiv.className = 'form-status';
 
         try {
-            // *** Встановлено ваш реальний URL для Formspree ***
+            // *** ВИПРАВЛЕНО: Встановлено ваш реальний URL для Formspree ***
+            // *** Логіка змінена для відправки FormData (включаючи файл) ***
             const response = await fetch('https://formspree.io/f/mblbwpzl', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: data.name,
-                    email: data.email,
-                    phone: data.phone,
-                    message: data.message,
-                    _subject: `Нова заявка від ${data.name}`
-                })
+                // Content-Type не встановлюємо, браузер зробить це автоматично для FormData
+                body: formData
             });
 
             if (response.ok) {
                 statusDiv.className = 'form-status success';
                 statusDiv.innerHTML = '✅ Спасибі! Ваша заявка відправлена. Ми зв\'яжемось з вами найближчим часом.';
                 form.reset();
+                // Скидаємо назву файлу
+                if (fileInput) {
+                    const fileTextSpan = form.querySelector('.file-text');
+                    if (fileTextSpan) {
+                        fileTextSpan.textContent = 'Прикріпити макет (SVG, DXF, PDF, JPG)';
+                    }
+                }
                 setTimeout(() => { statusDiv.innerHTML = ''; }, 5000);
             } else {
                 statusDiv.className = 'form-status error';
@@ -245,7 +254,6 @@ function formatCurrency(value) {
 }
 
 function formatTime(minutes) {
-    // Функція форматування часу для внутрішнього використання або тестування
     if (minutes < 0.1) {
         return (minutes * 60).toFixed(0) + ' сек';
     }
