@@ -56,8 +56,8 @@ function setupContactForm() {
         statusDiv.className = 'form-status';
 
         try {
-            // !!! Змініть 'https://formspree.io/f/xyzqwert' на вашу реальну кінцеву точку Formspree або інший бекенд !!!
-            const response = await fetch('https://formspree.io/f/xyzqwert', {
+            // *** Встановлено ваш реальний URL для Formspree ***
+            const response = await fetch('https://formspree.io/f/mblbwpzl', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -245,6 +245,7 @@ function formatCurrency(value) {
 }
 
 function formatTime(minutes) {
+    // Функція форматування часу для внутрішнього використання або тестування
     if (minutes < 0.1) {
         return (minutes * 60).toFixed(0) + ' сек';
     }
@@ -274,7 +275,7 @@ function calculateEngraving() {
     const productValue = document.getElementById('engProduct').value;
     const quantity = parseInt(document.getElementById('engQuantity').value); 
     
-    if (!materialValue || !productValue || !quantity || quantity <= 0) {
+    if (!materialValue || !productValue || isNaN(quantity) || quantity <= 0) {
         alert('Будь ласка, заповніть усі поля коректно');
         return;
     }
@@ -287,7 +288,7 @@ function calculateEngraving() {
     const basePricePerUnit = productDetails[2]; 
     const productText = productDetails[3];
 
-    // Крок 1: Розрахунок часу (для інформації)
+    // Розрахунок часу (для внутрішньої інформації, не відображається)
     const T_per_unit = area_mm2 * material.T_100_MM2 * (complexity / 100);
     const Ttotal = T_per_unit * quantity;
 
@@ -312,10 +313,9 @@ function calculateEngraving() {
     // Відображення результату
     const resultDiv = document.getElementById('engravingResult');
     
-    // Перевірка на існування елементів перед встановленням тексту (для уникнення помилок)
     document.getElementById('resultEngMaterial').textContent = material.name;
     document.getElementById('resultEngArea').textContent = `${productText} (Кількість ${quantity} шт.)`;
-    document.getElementById('resultEngTime').textContent = formatTime(Ttotal);
+    
     document.getElementById('resultEngTotal').textContent = formatCurrency(Cfinal_result);
     
     // Формування примітки
