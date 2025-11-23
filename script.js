@@ -1,6 +1,6 @@
 /* ============================================
    PRO JET - СКРИПТИ (JavaScript)
-   Оновлено: ФІКСОВАНА ЦІНА ЗА ПРОДУКТ ДЛЯ ГРАВІЮВАННЯ
+   Оновлено: ФІКСОВАНА ЦІНА ЗА ПРОДУКТ ДЛЯ ГРАВІЮВАННЯ (З ВИПРАВЛЕННЯМ)
    ============================================ */
 
 // ============================================
@@ -187,13 +187,16 @@ const engravingMaterials = {
 };
 
 // ============================================
-// ФІКСОВАНА ВАРТІСТЬ ЗА ОДИНИЦЮ ГРАВІЮВАННЯ
+// ФІКСОВАНА ВАРТІСТЬ ЗА ОДИНИЦЮ ГРАВІЮВАННЯ (НОВІ РОЗМІРИ)
 // [Площа в мм², Складність (%), Базова ціна за 1 шт (грн), Опис]
 // ============================================
 const engravingFixedPrices = {
-    S_Low: [2500, 30, 60.00, 'S - Малий логотип (до 25 см²)'],   
-    M_Avg: [10000, 50, 120.00, 'M - Етикетка/Напис (до 100 см²)'], 
-    L_High: [40000, 80, 250.00, 'L - Повна графіка/Зображення (до 400 см²)'],
+    // 1x2 см = 2 см² = 200 мм²
+    S_Low: [200, 30, 15.00, 'S - Малий логотип (1x2 см, до 2 см²)'],   
+    // 3x5 см = 15 см² = 1500 мм²
+    M_Avg: [1500, 50, 35.00, 'M - Етикетка/Напис (3x5 см, до 15 см²)'], 
+    // 6x10 см = 60 см² = 6000 мм²
+    L_High: [6000, 80, 80.00, 'L - Повна графіка/Зображення (6x10 см, до 60 см²)'],
 };
 
 
@@ -242,7 +245,7 @@ function formatCurrency(value) {
 }
 
 function formatTime(minutes) {
-    if (minutes < 1) {
+    if (minutes < 0.1) {
         return (minutes * 60).toFixed(0) + ' сек';
     }
     const totalSeconds = Math.round(minutes * 60);
@@ -309,10 +312,10 @@ function calculateEngraving() {
     // Відображення результату
     const resultDiv = document.getElementById('engravingResult');
     
+    // Перевірка на існування елементів перед встановленням тексту (для уникнення помилок)
     document.getElementById('resultEngMaterial').textContent = material.name;
     document.getElementById('resultEngArea').textContent = `${productText} (Кількість ${quantity} шт.)`;
     document.getElementById('resultEngTime').textContent = formatTime(Ttotal);
-    
     document.getElementById('resultEngTotal').textContent = formatCurrency(Cfinal_result);
     
     // Формування примітки
