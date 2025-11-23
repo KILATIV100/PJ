@@ -7,10 +7,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ШАПКА -->
     <header class="header" id="top">
         <div class="container header-content">
-            <!-- Логотип SVG з назвою -->
             <a href="#top" class="logo">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                     <defs>
@@ -31,16 +29,15 @@
                 <span class="logo-text">Pro Jet</span>
             </a>
             
-            <!-- Мобільне меню кнопка -->
             <button class="menu-toggle" id="menuToggle" aria-label="Меню">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
 
-            <!-- Навігація -->
             <nav class="nav" id="nav">
                 <a href="#services" class="nav-link">Послуги</a>
+                <a href="#tech-specs" class="nav-link">Вимоги</a>
                 <a href="#engraving-calc" class="nav-link">Гравіювання</a>
                 <a href="#cutting-calc" class="nav-link">Різання</a>
                 <a href="#contact" class="nav-link">Контакти</a>
@@ -48,7 +45,6 @@
         </div>
     </header>
 
-    <!-- ГЕРОЙ -->
     <section class="hero">
         <div class="container">
             <h1>Лазерне <span class="highlight">Гравіювання</span> та <span class="highlight highlight-cutting">Порізка</span></h1>
@@ -60,7 +56,6 @@
         </div>
     </section>
 
-    <!-- КАРУСЕЛЬ ПРОЄКТІВ -->
     <section class="portfolio">
         <div class="container">
             <h2>Портфоліо робіт</h2>
@@ -70,7 +65,6 @@
                 
                 <div class="carousel">
                     <div class="carousel-track" id="carouselTrack">
-                        <!-- Проєкт 1 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">🎁</div>
@@ -80,7 +74,6 @@
                             </div>
                         </div>
 
-                        <!-- Проєкт 2 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">📱</div>
@@ -90,7 +83,6 @@
                             </div>
                         </div>
 
-                        <!-- Проєкт 3 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">☕</div>
@@ -100,7 +92,6 @@
                             </div>
                         </div>
 
-                        <!-- Проєкт 4 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">🎖️</div>
@@ -110,7 +101,6 @@
                             </div>
                         </div>
 
-                        <!-- Проєкт 5 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">📸</div>
@@ -120,7 +110,6 @@
                             </div>
                         </div>
 
-                        <!-- Проєкт 6 -->
                         <div class="carousel-slide">
                             <div class="portfolio-item">
                                 <div class="portfolio-icon">🔑</div>
@@ -132,21 +121,18 @@
                     </div>
                 </div>
 
-                <button class="carousel-btn carousel-next" id="nextBtn">❯</button>
+                <button class="carousel-btn carousel-prev" id="prevBtn">❮</button>
             </div>
 
-            <!-- Індикатори -->
             <div class="carousel-indicators" id="indicators"></div>
         </div>
     </section>
 
-    <!-- ПОСЛУГИ -->
     <section id="services" class="services">
         <div class="container">
             <h2>Наші Послуги</h2>
             
             <div class="services-grid">
-                <!-- ГРАВІЮВАННЯ -->
                 <div class="service-card service-engraving">
                     <div class="service-icon">✏️</div>
                     <h3>Гравіювання</h3>
@@ -159,7 +145,6 @@
                     <a href="#engraving-calc" class="service-btn">Розрахувати ціну</a>
                 </div>
 
-                <!-- РІЗАННЯ -->
                 <div class="service-card service-cutting">
                     <div class="service-icon">✂️</div>
                     <h3>Порізка</h3>
@@ -172,7 +157,6 @@
                     <a href="#cutting-calc" class="service-btn">Розрахувати ціну</a>
                 </div>
 
-                <!-- ДИЗАЙН -->
                 <div class="service-card service-design">
                     <div class="service-icon">🎨</div>
                     <h3>Дизайн</h3>
@@ -188,7 +172,39 @@
         </div>
     </section>
 
-    <!-- КАЛЬКУЛЯТОР ГРАВІЮВАННЯ -->
+    <section id="tech-specs" class="tech-specs">
+        <div class="container">
+            <h2>Вимоги до макетів та Матеріали</h2>
+
+            <div class="tech-grid">
+                <div class="tech-card tech-requirements">
+                    <h3>Вимоги до файлів (Різання)</h3>
+                    <ul class="requirements-list">
+                        <li>**Формат:** Приймаємо лише **векторні** файли: `SVG, DXF, AI`.</li>
+                        <li>**Контури:** Лінії різу мають бути **замкненими** (Closed Curves).</li>
+                        <li>**Товщина:** Лінія має бути мінімальної товщини (Hairline).</li>
+                        <li>**Мінімальний відступ:** Зазор між паралельними лініями різу має бути не менше **3 мм** (1/8 дюйма) для запобігання обгоранню.</li>
+                        <li>**Помилки:** Уникайте перетину ліній, це призводить до подвійного різу.</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card tech-materials">
+                    <h3>Наші матеріали та обмеження</h3>
+                    <ul class="requirements-list">
+                        <li>**Максимальна товщина:** Фанера/Дерево до **4 мм**, Акрил до **3 мм**.</li>
+                        <li>**Найкраще для:** Гравіювання на шкірі, фанері, анодованому алюмінії.</li>
+                        <li>**Робоча зона:** 450 x 440 мм.</li>
+                    </ul>
+                    <div class="warning-box">
+                        <span class="warning-icon">🚫</span>
+                        <h4>**УВАГА! ЗАБОРОНЕНІ МАТЕРІАЛИ**</h4>
+                        <p>Ми категорично не ріжемо **ПВХ (вініл)** та матеріали, що містять хлор, оскільки це призводить до виділення токсичних газів та пошкодження обладнання.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="engraving-calc" class="calculator">
         <div class="container">
             <h2>Калькулятор Гравіювання</h2>
@@ -208,25 +224,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="engThickness">Товщина:</label>
-                        <select id="engThickness" required>
-                            <option value="">-- Виберіть товщину --</option>
+                        <label for="engProduct">Розмір гравіювання та складність:</label>
+                        <select id="engProduct" required>
+                            <option value="">-- Виберіть тип гравіювання --</option>
+                            <option value="S_Low">S - Малий логотип (до 25 см², низьке заповнення)</option>
+                            <option value="M_Avg">M - Етикетка/Напис (до 100 см², середнє заповнення)</option>
+                            <option value="L_High">L - Повна графіка/Зображення (до 400 см², високе заповнення)</option>
                         </select>
+                        <small>Ціна вказана за 1 об'єкт. Площа 400 см² = 20х20 см.</small>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="engArea">Площа гравіювання (мм²):</label>
-                        <input type="number" id="engArea" value="10000" min="1" required>
-                        <small>Розмір: Ширина × Висота в міліметрах</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="engComplexity">Складність гравіювання:</label>
-                        <select id="engComplexity" required>
-                            <option value="30">Низька (30% заповнення)</option>
-                            <option value="50" selected>Середня (50% заповнення)</option>
-                            <option value="80">Висока (80% заповнення)</option>
-                        </select>
+                        <label for="engQuantity">Кількість об'єктів (шт):</label>
+                        <input type="number" id="engQuantity" value="1" min="1" required>
+                        <small>Якщо вам потрібно більше 1000 шт., ви отримаєте оптову знижку 15%.</small>
                     </div>
 
                     <button type="button" class="btn btn-calculate" onclick="calculateEngraving()">Розрахувати</button>
@@ -241,18 +252,13 @@
                     </div>
 
                     <div class="result-row">
-                        <span class="result-label">Площа:</span>
+                        <span class="result-label">Тип гравіювання:</span>
                         <span class="result-value" id="resultEngArea">-</span>
                     </div>
 
                     <div class="result-row">
-                        <span class="result-label">Час гравіювання:</span>
+                        <span class="result-label">Орієнтовний час:</span>
                         <span class="result-value" id="resultEngTime">-</span>
-                    </div>
-
-                    <div class="result-row">
-                        <span class="result-label">Вартість за мм²:</span>
-                        <span class="result-value" id="resultEngUnitPrice">-</span>
                     </div>
 
                     <div class="result-row result-final">
@@ -266,7 +272,6 @@
         </div>
     </section>
 
-    <!-- КАЛЬКУЛЯТОР РІЗАННЯ -->
     <section id="cutting-calc" class="calculator calculator-cutting">
         <div class="container">
             <h2>Калькулятор Порізки</h2>
@@ -329,13 +334,12 @@
                         <span class="result-value" id="resultCutTotal">-</span>
                     </div>
 
-                    <p class="calc-note">* Мінімальне замовлення: 150 грн | Знижка від 500 м: 10%</p>
+                    <p class="calc-note">* Мінімальне замовлення: 150 грн | Знижка від 500 м: 15%</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- КОНТАКТИ -->
     <section id="contact" class="contact">
         <div class="container">
             <h2>Зв'яжіться з Нами</h2>
@@ -361,7 +365,6 @@
         </div>
     </section>
 
-    <!-- ФУТЕР -->
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Pro Jet. Усі права захищені.</p>
