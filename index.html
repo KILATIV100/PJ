@@ -10,7 +10,7 @@
     <!-- ШАПКА -->
     <header class="header" id="top">
         <div class="container header-content">
-            <!-- Логотип SVG -->
+            <!-- Логотип SVG з назвою -->
             <a href="#top" class="logo">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                     <defs>
@@ -163,20 +163,33 @@
                 <div class="service-card service-cutting">
                     <div class="service-icon">✂️</div>
                     <h3>Порізка</h3>
-                    <p>Точна лазерна порізка складних форм без деформацій матеріалу</p>
+                    <p>Точне різання матеріалів для створення деталей складних конфігурацій</p>
                     <ul class="service-features">
                         <li>⚡ Швидка обробка</li>
-                        <li>🎯 Чистий рез</li>
-                        <li>💎 Всі матеріали</li>
+                        <li>🎯 Складні форми</li>
+                        <li>💎 Чисті краї</li>
                     </ul>
                     <a href="#cutting-calc" class="service-btn">Розрахувати ціну</a>
+                </div>
+
+                <!-- ДИЗАЙН -->
+                <div class="service-card service-design">
+                    <div class="service-icon">🎨</div>
+                    <h3>Дизайн</h3>
+                    <p>Профільна розробка макетів та підготовка файлів до виробництва</p>
+                    <ul class="service-features">
+                        <li>🖌️ Креативний підхід</li>
+                        <li>📁 Готові файли</li>
+                        <li>💼 Ваш бренд</li>
+                    </ul>
+                    <a href="#contact" class="service-btn">Замовити</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- КАЛЬКУЛЯТОР ГРАВІЮВАННЯ -->
-    <section id="engraving-calc" class="calculator calculator-engraving">
+    <section id="engraving-calc" class="calculator">
         <div class="container">
             <h2>Калькулятор Гравіювання</h2>
             
@@ -330,19 +343,19 @@
             <div class="contact-grid">
                 <div class="contact-info">
                     <h3>Pro Jet</h3>
-                    <p><strong>📞 Телефон:</strong> <a href="tel:+380671234567">+38 (067) 123-45-67</a></p>
-                    <p><strong>📧 Email:</strong> <a href="mailto:info@projet.ua">info@projet.ua</a></p>
-                    <p><strong>📍 Адреса:</strong> м. Броварі, Київська область</p>
-                    <p><strong>🌐 Сайт:</strong> <a href="https://projet.ua" target="_blank">projet.ua</a></p>
-                    <p><strong>⏰ Режим роботи:</strong><br>Пн-Пт: 09:00-18:00<br>Сб: 10:00-15:00</p>
+                    <p><strong>📞 Телефон:</strong> <a href="tel:+380676170619">+38 (067) 617-06-19</a></p>
+                    <p><strong>📧 Email:</strong> <a href="mailto:kilativ100@gmail.com">kilativ100@gmail.com</a></p>
+                    <p><strong>📍 Адреса:</strong> м. Бровари, Київська область</p>
+                    <p><strong>⏰ Режим роботи:</strong><br>Пн-Пт: 09:00-18:00<br>Сб: 10:00-18:00</p>
                 </div>
 
-                <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <form class="contact-form" id="contactForm">
                     <input type="text" name="name" placeholder="Ваше ім'я" required>
                     <input type="email" name="email" placeholder="Ваш email" required>
                     <input type="tel" name="phone" placeholder="Ваш телефон" required>
                     <textarea name="message" placeholder="Ваше повідомлення" rows="5" required></textarea>
                     <button type="submit" class="btn btn-primary">Відправити</button>
+                    <div class="form-status" id="formStatus"></div>
                 </form>
             </div>
         </div>
@@ -352,11 +365,10 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Pro Jet. Усі права захищені.</p>
-            <p>Лазерне гравіювання та порізка | Броварі, Київська область</p>
+            <p>Лазерне гравіювання та порізка | Бровари, Київська область</p>
         </div>
     </footer>
 
-    <!-- СКРИПТИ -->
     <script src="script.js"></script>
 </body>
 </html>
