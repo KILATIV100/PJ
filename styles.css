@@ -500,7 +500,7 @@ body {
 .tech-specs {
     padding: 80px 0;
     background: var(--white);
-    border-top: 1px solid #eee;
+    /* Видалено зайвий border-top: 1px solid #eee; */
 }
 
 .tech-specs h2 {
@@ -735,7 +735,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
-    align-items: start; /* Змінено на start для кращого вигляду */
+    align-items: start;
 }
 
 .contact-info h3 {
@@ -771,7 +771,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: fit-content; /* Займає мінімальну висоту */
+    height: fit-content; 
 }
 
 .contact-form-link h3 {
@@ -805,12 +805,17 @@ body {
 }
 
 /* ============================================
-   МОБІЛЬНА ВЕРСІЯ (Покращення адаптації)
+   МОБІЛЬНА ВЕРСІЯ (Фінальні правки)
    ============================================ */
 
 @media (max-width: 900px) {
     .tech-grid {
         grid-template-columns: 1fr;
+    }
+    
+    /* Нове правило: переміщуємо блок попередження вниз на мобільних пристроях */
+    .tech-card.tech-materials {
+        order: 2;
     }
 
     .tech-card {
@@ -879,6 +884,11 @@ body {
     .carousel-container {
         gap: 10px;
     }
+    
+    .carousel {
+        /* Фікс для полоси прокрутки */
+        overflow-x: hidden; 
+    }
 
     .carousel-btn {
         width: 40px;
@@ -897,7 +907,7 @@ body {
     }
     
     .contact-form-link {
-        order: 1; /* Кнопка над інформацією */
+        order: 1; 
         padding: 20px;
     }
     
