@@ -486,8 +486,15 @@ body {
     background: var(--accent);
 }
 
+/* Кнопка великого розміру для форми */
+.btn-large {
+    font-size: 16px;
+    padding: 15px 30px;
+    width: 100%; /* Забезпечуємо повну ширину в контейнері */
+}
+
 /* ============================================
-   ТЕХНІЧНІ ВИМОГИ (НОВИЙ РОЗДІЛ)
+   ТЕХНІЧНІ ВИМОГИ
    ============================================ */
 
 .tech-specs {
@@ -548,7 +555,7 @@ body {
 .warning-box {
     margin-top: 30px;
     padding: 20px;
-    background: #fffbef; /* Світло-жовтий фон */
+    background: #fffbef; 
     border: 2px solid var(--warning);
     border-radius: 4px;
     display: flex;
@@ -728,7 +735,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
-    align-items: center;
+    align-items: start; /* Змінено на start для кращого вигляду */
 }
 
 .contact-info h3 {
@@ -755,23 +762,29 @@ body {
     text-decoration: underline;
 }
 
-/* СТИЛІ ДЛЯ GOOGLE FORM EMBED */
-.google-form-embed {
+/* СТИЛІ ДЛЯ БЛОКУ З КНОПКОЮ */
+.contact-form-link {
     background: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    /* Видаляємо flex/grid, щоб не конфліктувати з iframe */
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: fit-content; /* Займає мінімальну висоту */
 }
 
-.google-form-embed iframe {
-    width: 100%;
-    /* Google Forms задає висоту сам, але мінімальна для адаптивності */
-    min-height: 500px; 
-    border: none;
-    border-radius: 4px;
-    overflow: hidden;
+.contact-form-link h3 {
+    border-bottom: 2px solid var(--light-gray);
+    padding-bottom: 10px;
+    margin-bottom: 0;
+}
+
+.small-note {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
 }
 
 /* ============================================
@@ -883,8 +896,9 @@ body {
         gap: 30px; 
     }
     
-    .google-form-embed {
-        order: 1; /* Форма над інформацією */
+    .contact-form-link {
+        order: 1; /* Кнопка над інформацією */
+        padding: 20px;
     }
     
     .contact-info {
@@ -893,10 +907,6 @@ body {
 
     .portfolio-item {
         min-height: 250px;
-    }
-
-    .google-form-embed iframe {
-        min-height: 600px; /* Збільшуємо мінімальну висоту на мобільних пристроях */
     }
 }
 
@@ -954,7 +964,12 @@ body {
         font-size: 20px;
     }
     
-    .google-form-embed {
-        padding: 10px;
+    .contact-form-link {
+        padding: 15px;
+    }
+    
+    .btn-large {
+        font-size: 14px;
+        padding: 12px 20px;
     }
 }
