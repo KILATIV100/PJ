@@ -11,6 +11,8 @@
     --engraving: #081b26;
     --cutting: #1db4b3;
     --accent: #00d9d9;
+    --success: #10b981;
+    --error: #ef4444;
 }
 
 * {
@@ -62,6 +64,7 @@ body {
     gap: 10px;
     text-decoration: none;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .logo-svg {
@@ -366,6 +369,10 @@ body {
     border-left-color: var(--cutting);
 }
 
+.service-design {
+    border-left-color: var(--accent);
+}
+
 .service-card:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     transform: translateY(-4px);
@@ -448,6 +455,12 @@ body {
     background: var(--accent);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(29, 180, 179, 0.3);
+}
+
+.btn-primary:disabled {
+    background: #999;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .btn-secondary {
@@ -645,6 +658,7 @@ body {
 .contact-info a {
     color: var(--primary);
     text-decoration: none;
+    font-weight: 600;
 }
 
 .contact-info a:hover {
@@ -664,6 +678,7 @@ body {
     border-radius: 4px;
     font-family: inherit;
     font-size: 14px;
+    transition: all 0.3s ease;
 }
 
 .contact-form input:focus,
@@ -676,6 +691,29 @@ body {
 .contact-form textarea {
     min-height: 150px;
     resize: vertical;
+}
+
+/* Статус форми */
+.form-status {
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+}
+
+.form-status.success {
+    background: #d1fae5;
+    color: var(--success);
+    border: 1px solid var(--success);
+    display: block;
+}
+
+.form-status.error {
+    background: #fee2e2;
+    color: var(--error);
+    border: 1px solid var(--error);
+    display: block;
 }
 
 /* ============================================
@@ -831,5 +869,10 @@ body {
 
     .result-row.result-final .result-value {
         font-size: 20px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        font-size: 16px;
     }
 }
