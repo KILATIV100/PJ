@@ -541,7 +541,8 @@
                 <nav>
                     <a href="#advantages">Переваги</a>
                     <a href="#services">Послуги</a>
-                    <a href="#calculator">Калькулятор</a>
+                    <a href="#calculator">Гравіювання</a>
+                    <a href="#calculator-cut">Різка</a>
                     <a href="#contact">Контакти</a>
                 </nav>
 
@@ -553,11 +554,11 @@
     <!-- HERO -->
     <section class="hero">
         <div class="container">
-            <h1>Лазерне <span>Гравіювання</span> та Порізка</h1>
+            <h1>Лазерне <span>Гравіювання та Порізка</span></h1>
             <p>Професійні послуги для вашого бренду. Найвища якість, найкращі ціни, найшвидша обробка.</p>
             <div class="hero-buttons">
-                <a href="#calculator" class="cta-button">Розрахувати вартість</a>
-                <a href="#contact" class="cta-button btn-secondary">Зв'язатися з нами</a>
+                <a href="#calculator" class="cta-button">Розрахунок гравіювання</a>
+                <a href="#calculator-cut" class="cta-button btn-secondary">Розрахунок різки</a>
             </div>
         </div>
     </section>
@@ -628,10 +629,10 @@
         </div>
     </section>
 
-    <!-- CALCULATOR -->
+    <!-- CALCULATOR GRAVURE -->
     <section id="calculator" class="calculator">
         <div class="container">
-            <h2 class="section-title">Розрахунок Вартості</h2>
+            <h2 class="section-title">Калькулятор гравіювання</h2>
             <div class="calculator-grid">
                 <div class="calc-form">
                     <label>Виберіть матеріал:</label>
@@ -667,6 +668,51 @@
                         ✨ Безкоштовна консультація<br>
                         ✨ Пробні зразки можливі<br>
                         ✨ Спеціальні ціни на великі об'єми
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALCULATOR CUT -->
+    <section id="calculator-cut" class="calculator">
+        <div class="container">
+            <h2 class="section-title">Калькулятор різки лазером</h2>
+            <div class="calculator-grid">
+                <div class="calc-form">
+                    <label>Виберіть матеріал:</label>
+                    <select id="cut-material" onchange="updateThicknesses()">
+                        <option value="">-- Виберіть матеріал --</option>
+                        <option value="wood">Дерево, фанера, шпон</option>
+                        <option value="paper">Папір, картон</option>
+                        <option value="plastic">Пластик, оргскло, акрил</option>
+                        <option value="foam">Ізолон, поролон</option>
+                        <option value="fabric">Тканина</option>
+                        <option value="leather">Шкіра, екошкіра</option>
+                        <option value="felt">Фетр, повсть</option>
+                    </select>
+
+                    <label>Виберіть товщину:</label>
+                    <select id="cut-thickness" onchange="calculateCutPrice()">
+                        <option value="">-- Спочатку виберіть матеріал --</option>
+                    </select>
+
+                    <label>Довжина лінії різки (см):</label>
+                    <input type="number" id="cut-length" placeholder="100" value="100" oninput="calculateCutPrice()">
+
+                    <label>Кількість копій:</label>
+                    <input type="number" id="cut-quantity" placeholder="1" value="1" oninput="calculateCutPrice()">
+                </div>
+
+                <div class="calc-result">
+                    <h3>Приблизна Вартість:</h3>
+                    <div class="calc-price" id="cut-price">0 грн</div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.7);">
+                        * Це приблизний розрахунок на основі довжини лінії різки.<br>
+                        <br>
+                        ✨ Мінімальний заказ - від 100 грн<br>
+                        ✨ Скидки на великі обсяги<br>
+                        ✨ Безкоштовна консультація щодо оптимізації різки
                     </div>
                 </div>
             </div>
@@ -733,8 +779,8 @@
                 <div class="footer-section">
                     <h4>Послуги</h4>
                     <ul>
-                        <li><a href="#services">Гравіювання</a></li>
-                        <li><a href="#services">Порізка</a></li>
+                        <li><a href="#calculator">Гравіювання</a></li>
+                        <li><a href="#calculator-cut">Різка</a></li>
                         <li><a href="#services">Брендування</a></li>
                         <li><a href="#contact">Контакти</a></li>
                     </ul>
@@ -768,7 +814,128 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // Калькулятор вартості
+        // Дані для матеріалів та різки
+        const cutPrices = {
+            wood: {
+                name: "Дерево, фанера, шпон",
+                sizes: {
+                    "1 мм": 9,
+                    "2 мм": 10,
+                    "3 мм": 12,
+                    "4 мм": 15,
+                    "5 мм": 18,
+                    "6 мм": 22,
+                    "8 мм": 32
+                }
+            },
+            paper: {
+                name: "Папір, картон",
+                sizes: {
+                    "до 1 мм": 9,
+                    "2 мм": 10,
+                    "3 мм": 11,
+                    "4 мм": 14,
+                    "6 мм": 18,
+                    "8 мм": 22
+                }
+            },
+            plastic: {
+                name: "Пластик, оргскло, акрил",
+                sizes: {
+                    "до 1 мм": 8,
+                    "2 мм": 9,
+                    "3 мм": 12,
+                    "4 мм": 16,
+                    "6 мм": 22,
+                    "8 мм": 30,
+                    "10 мм": 40
+                }
+            },
+            foam: {
+                name: "Ізолон, поролон",
+                sizes: {
+                    "5 мм": 20,
+                    "10 мм": 25.5,
+                    "20 мм": 50,
+                    "30 мм": 67.5,
+                    "40 мм": 75,
+                    "50 мм": 85
+                }
+            },
+            fabric: {
+                name: "Тканина",
+                sizes: {
+                    "в настилі": 6,
+                    "тип шифон": 7,
+                    "тип неопрен": 11,
+                    "тип кордура": 8,
+                    "кевлар": 15
+                }
+            },
+            leather: {
+                name: "Шкіра, екошкіра",
+                sizes: {
+                    "до 2 мм": 14,
+                    "2 мм": 14,
+                    "3 мм": 20,
+                    "4 мм": 23
+                }
+            },
+            felt: {
+                name: "Фетр, повсть",
+                sizes: {
+                    "до 2 мм": 9,
+                    "2 мм": 10,
+                    "3 мм": 13,
+                    "4 мм": 17
+                }
+            }
+        };
+
+        // Обновлення доступних товщин при виборі матеріалу
+        function updateThicknesses() {
+            const material = document.getElementById('cut-material').value;
+            const thicknessSelect = document.getElementById('cut-thickness');
+            
+            thicknessSelect.innerHTML = '<option value="">-- Виберіть товщину --</option>';
+            
+            if (material && cutPrices[material]) {
+                const sizes = cutPrices[material].sizes;
+                for (const [size, price] of Object.entries(sizes)) {
+                    const option = document.createElement('option');
+                    option.value = price;
+                    option.textContent = `${size} – ${price} грн`;
+                    thicknessSelect.appendChild(option);
+                }
+            }
+            
+            calculateCutPrice();
+        }
+
+        // Калькулятор цін на різку
+        function calculateCutPrice() {
+            const pricePerUnit = parseFloat(document.getElementById('cut-thickness').value) || 0;
+            const length = parseFloat(document.getElementById('cut-length').value) || 100;
+            const quantity = parseInt(document.getElementById('cut-quantity').value) || 1;
+
+            if (pricePerUnit === 0) {
+                document.getElementById('cut-price').textContent = '0 грн';
+                return;
+            }
+
+            // Формула: (ціна за мм * довжина см) * кількість
+            let totalPrice = (pricePerUnit * length / 10) * quantity;
+            
+            // Мінімум 100 грн
+            if (totalPrice < 100) {
+                totalPrice = 100;
+            }
+
+            const result = Math.round(totalPrice);
+            document.getElementById('cut-price').textContent = result.toLocaleString('uk-UA') + ' грн';
+        }
+
+        // Калькулятор цін на гравіювання
         function calculatePrice() {
             const material = parseFloat(document.getElementById('material').value) || 100;
             const size = parseFloat(document.getElementById('size').value) || 100;
@@ -799,8 +966,11 @@
             document.getElementById('price').innerHTML = displayText;
         }
 
-        // Ініціалізація калькулятора при завантаженні
-        window.addEventListener('load', calculatePrice);
+        // Ініціалізація калькуляторів при завантаженні
+        window.addEventListener('load', function() {
+            calculatePrice();
+            calculateCutPrice();
+        });
 
         // Обробка форми контактів
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
@@ -853,10 +1023,8 @@
                 formStatus.className = 'form-status error';
                 formStatus.textContent = '❌ Помилка при відправці! Спробуйте пізніше або зв\'яжіться з нами напряму.';
                 
-                // Альтернативний спосіб - через локальну функцію (якщо є серверна частина)
                 console.error('Error:', error);
                 
-                // Показуємо інформацію про ручну відправку
                 setTimeout(() => {
                     alert(`Помилка при відправці через форму. Контактні дані:\nТелефон: +38 (067) 617-06-19\nEmail: kilativ100@gmail.com`);
                 }, 1000);
