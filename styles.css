@@ -110,7 +110,7 @@ body {
 }
 
 .menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(10px, 10px);
+    transform: rotate(45deg) translate(5px, 6px);
 }
 
 .menu-toggle.active span:nth-child(2) {
@@ -118,7 +118,7 @@ body {
 }
 
 .menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(10px, -10px);
+    transform: rotate(-45deg) translate(5px, -6px);
 }
 
 /* ============================================
@@ -703,7 +703,7 @@ body {
     color: #999;
     margin-top: 15px;
     font-style: italic;
-    line-height: 1.5; /* Покращуємо читабельність довгих приміток */
+    line-height: 1.5; 
 }
 
 /* ============================================
@@ -755,97 +755,23 @@ body {
     text-decoration: underline;
 }
 
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.contact-form input:not([type="file"]),
-.contact-form textarea {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
-}
-
-.contact-form textarea {
-    min-height: 150px;
-    resize: vertical;
-}
-
-/* СТИЛІ ДЛЯ ЗАВАНТАЖЕННЯ ФАЙЛУ */
-.form-group-file {
-    position: relative;
-    overflow: hidden;
-}
-
-.file-label {
-    display: block;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* СТИЛІ ДЛЯ GOOGLE FORM EMBED */
+.google-form-embed {
     background: white;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--dark-gray);
-    transition: all 0.3s ease;
-    text-align: left;
-    display: flex;
-    align-items: center;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* Видаляємо flex/grid, щоб не конфліктувати з iframe */
+    display: block;
 }
 
-.file-label:hover {
-    border-color: var(--primary);
-}
-
-.file-label input[type="file"] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
-    opacity: 0;
-    font-size: 100px;
-    cursor: pointer;
-}
-
-.file-text::before {
-    content: "📎 ";
-    margin-right: 8px;
-    font-size: 16px;
-}
-
-
-/* Статус форми */
-.form-status {
-    padding: 14px;
+.google-form-embed iframe {
+    width: 100%;
+    /* Google Forms задає висоту сам, але мінімальна для адаптивності */
+    min-height: 500px; 
+    border: none;
     border-radius: 4px;
-    font-size: 14px;
-    margin-top: 10px;
-    display: none;
-}
-
-.form-status.success {
-    background: #d1fae5;
-    color: var(--success);
-    border: 1px solid var(--success);
-    display: block;
-}
-
-.form-status.error {
-    background: #fee2e2;
-    color: var(--error);
-    border: 1px solid var(--error);
-    display: block;
+    overflow: hidden;
 }
 
 /* ============================================
@@ -954,10 +880,10 @@ body {
 
     .contact-grid {
         grid-template-columns: 1fr;
-        gap: 30px; /* Зменшуємо проміжок */
+        gap: 30px; 
     }
     
-    .contact-form {
+    .google-form-embed {
         order: 1; /* Форма над інформацією */
     }
     
@@ -967,6 +893,10 @@ body {
 
     .portfolio-item {
         min-height: 250px;
+    }
+
+    .google-form-embed iframe {
+        min-height: 600px; /* Збільшуємо мінімальну висоту на мобільних пристроях */
     }
 }
 
@@ -1023,13 +953,8 @@ body {
     .result-row.result-final .result-value {
         font-size: 20px;
     }
-
-    .contact-form input:not([type="file"]),
-    .contact-form textarea {
-        font-size: 14px;
-    }
     
-    .file-text {
-        font-size: 12px;
+    .google-form-embed {
+        padding: 10px;
     }
 }
