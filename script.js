@@ -1,6 +1,6 @@
 /* ============================================
    PRO JET - СКРИПТИ (JavaScript)
-   Оновлено: ФІКСОВАНА ЦІНА ЗА ПРОДУКТ ДЛЯ ГРАВІЮВАННЯ (З ВИПРАВЛЕННЯМ)
+   Оновлено: ВИДАЛЕНО ЛОГІКУ ОБРОБКИ ФОРМИ (тепер використовуємо Google Forms)
    ============================================ */
 
 // ============================================
@@ -24,82 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     initCarousel();
-    setupContactForm();
+    // ВИДАЛЕНО: setupContactForm(); - більше не потрібна
 });
 
 // ============================================
-// ОБРОБКА ФОРМИ КОНТАКТІВ
-// ============================================
-
-function setupContactForm() {
-    const form = document.getElementById('contactForm');
-    const fileInput = document.getElementById('upload');
-
-    if (!form) return;
-    
-    // Відображення імені завантаженого файлу
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const fileName = this.files[0] ? this.files[0].name : 'Прикріпити макет (SVG, DXF, PDF, JPG)';
-            const fileTextSpan = form.querySelector('.file-text');
-            if (fileTextSpan) {
-                fileTextSpan.textContent = fileName;
-            }
-        });
-    }
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        
-        const statusDiv = document.getElementById('formStatus');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalBtnText = submitBtn.textContent;
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Відправлення...';
-        statusDiv.innerHTML = '';
-        statusDiv.className = 'form-status';
-
-        try {
-            // *** ВИПРАВЛЕНО: Встановлено ваш реальний URL для Formspree ***
-            // *** Логіка змінена для відправки FormData (включаючи файл) ***
-            const response = await fetch('https://formspree.io/f/mblbwpzl', {
-                method: 'POST',
-                // Content-Type не встановлюємо, браузер зробить це автоматично для FormData
-                body: formData
-            });
-
-            if (response.ok) {
-                statusDiv.className = 'form-status success';
-                statusDiv.innerHTML = '✅ Спасибі! Ваша заявка відправлена. Ми зв\'яжемось з вами найближчим часом.';
-                form.reset();
-                // Скидаємо назву файлу
-                if (fileInput) {
-                    const fileTextSpan = form.querySelector('.file-text');
-                    if (fileTextSpan) {
-                        fileTextSpan.textContent = 'Прикріпити макет (SVG, DXF, PDF, JPG)';
-                    }
-                }
-                setTimeout(() => { statusDiv.innerHTML = ''; }, 5000);
-            } else {
-                statusDiv.className = 'form-status error';
-                statusDiv.innerHTML = '❌ Помилка відправки. Спробуйте ще раз.';
-            }
-        } catch (error) {
-            console.error('Помилка:', error);
-            statusDiv.className = 'form-status error';
-            statusDiv.innerHTML = '❌ Помилка з\'єднання. Напишіть нам на kilativ100@gmail.com або позвоніть +38 (067) 617-06-19';
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-        }
-    });
-}
-
-// ============================================
-// КАРУСЕЛЬ (ЛОГІКА ЗАЛИШАЄТЬСЯ)
+// КАРУСЕЛЬ
 // ============================================
 
 let currentSlide = 0;
@@ -108,7 +37,10 @@ let autoplayInterval;
 
 function initCarousel() {
     const track = document.getElementById('carouselTrack');
-    if (!track) return;
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    if (!track || !nextBtn || !prevBtn) return;
     
     const slides = track.querySelectorAll('.carousel-slide');
     if (slides.length > 0) {
@@ -119,8 +51,10 @@ function initCarousel() {
     updateCarousel();
     startAutoplay();
     
-    document.getElementById('prevBtn').addEventListener('click', prevSlide);
-    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+    
+    window.addEventListener('resize', updateCarousel);
 }
 
 function createIndicators() {
@@ -142,7 +76,12 @@ function updateCarousel() {
     const track = document.getElementById('carouselTrack');
     if (!track) return;
     
-    const slideWidth = track.firstElementChild ? track.firstElementChild.offsetWidth : 0;
+    // Перевіряємо, чи є слайди
+    const firstSlide = track.querySelector('.carousel-slide');
+    if (!firstSlide) return;
+
+    // Визначаємо ширину одного слайда (з урахуванням gap 20px)
+    const slideWidth = firstSlide.offsetWidth;
     const gap = 20; 
 
     track.style.transform = `translateX(-${currentSlide * (slideWidth + gap)}px)`;
@@ -252,27 +191,6 @@ function formatCurrency(value) {
         maximumFractionDigits: 2
     }).format(value);
 }
-
-function formatTime(minutes) {
-    if (minutes < 0.1) {
-        return (minutes * 60).toFixed(0) + ' сек';
-    }
-    const totalSeconds = Math.round(minutes * 60);
-    const min = Math.floor(totalSeconds / 60);
-    const sec = totalSeconds % 60;
-    if (min >= 60) {
-        const hours = Math.floor(min / 60);
-        const remainingMin = min % 60;
-        return `${hours} год ${remainingMin} хв`;
-    }
-    return `${min} хв ${sec} сек`;
-}
-
-function formatArea(mm2) {
-    const cm2 = mm2 / 100;
-    return cm2.toFixed(0) + ' см²';
-}
-
 
 // ============================================
 // КАЛЬКУЛЯТОР ГРАВІЮВАННЯ (НОВА ФІКСОВАНА ЛОГІКА)
@@ -442,7 +360,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (element) {
             element.addEventListener(element.type === 'select-one' ? 'change' : 'input', function() {
                 const resultId = id.startsWith('eng') ? 'engravingResult' : 'cuttingResult';
-                document.getElementById(resultId).style.display = 'none';
+                const resultElement = document.getElementById(resultId);
+                if (resultElement) {
+                    resultElement.style.display = 'none';
+                }
             });
         }
     });
