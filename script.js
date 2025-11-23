@@ -28,7 +28,87 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Ініціалізація каруселі
     initCarousel();
+
+    // Ініціалізація форми контактів
+    setupContactForm();
 });
+
+// ============================================
+// ОБРОБКА ФОРМИ КОНТАКТІВ
+// ============================================
+
+function setupContactForm() {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Отримуємо дані форми
+        const formData = new FormData(this);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            message: formData.get('message')
+        };
+
+        const statusDiv = document.getElementById('formStatus');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+
+        // Покажемо статус загрузки
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Відправлення...';
+        statusDiv.innerHTML = '';
+        statusDiv.className = 'form-status';
+
+        try {
+            // Відправляємо на свій backend або на email сервіс
+            const response = await fetch('https://formspree.io/f/xyzqwert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: data.name,
+                    email: data.email,
+                    phone: data.phone,
+                    message: data.message,
+                    _subject: `Нова заявка від ${data.name}`
+                })
+            });
+
+            if (response.ok) {
+                // Успіх!
+                statusDiv.className = 'form-status success';
+                statusDiv.innerHTML = '✅ Спасибі! Ваша заявка відправлена. Ми зв\'яжемось з вами найближчим часом.';
+                
+                // Очищуємо форму
+                form.reset();
+                
+                // Приховуємо статус через 5 секунд
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 5000);
+            } else {
+                // Помилка від сервера
+                statusDiv.className = 'form-status error';
+                statusDiv.innerHTML = '❌ Помилка відправки. Спробуйте ще раз.';
+            }
+        } catch (error) {
+            console.error('Помилка:', error);
+            
+            // Якщо помилка з мережею, показуємо альтернативне повідомлення
+            statusDiv.className = 'form-status error';
+            statusDiv.innerHTML = '❌ Помилка з\'єднання. Напишіть нам на kilativ100@gmail.com або позвоніть +38 (067) 617-06-19';
+        } finally {
+            // Повертаємо кнопку в нормальний стан
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        }
+    });
+}
 
 // ============================================
 // КАРУСЕЛЬ
