@@ -113,6 +113,23 @@ const OrderSchema = new mongoose.Schema({
     default: 'new'
   },
 
+  // Доставка (Nova Poshta)
+  delivery: {
+    method: {
+      type: String,
+      enum: ['novaposhta', 'pickup', 'courier'],
+      default: 'novaposhta'
+    },
+    trackingNumber: String,
+    shipmentRef: String,
+    status: String,
+    cost: Number,
+    city: String,
+    department: String,
+    createdAt: Date,
+    lastUpdate: Date
+  },
+
   // Дати
   createdAt: {
     type: Date,

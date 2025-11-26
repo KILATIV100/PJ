@@ -18,6 +18,8 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/products');
+const userRoutes = require('./routes/user');
+const novaPoshtaRoutes = require('./routes/novaposhta');
 
 // Initialize Express app
 const app = express();
@@ -82,6 +84,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/novaposhta', novaPoshtaRoutes);
 
 // ============================================
 // FRONTEND ROUTES (для SPA)
@@ -102,6 +106,14 @@ app.get('/shop', (req, res) => {
 
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/auth', (req, res) => {
+  res.sendFile(path.join(__dirname, 'auth.html'));
+});
+
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'profile.html'));
 });
 
 // ============================================

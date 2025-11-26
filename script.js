@@ -11,18 +11,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('nav');
 
-    menuToggle.addEventListener('click', function() {
+    // Відкриття/закриття меню при кліку на гамбургер
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
         menuToggle.classList.toggle('active');
         nav.classList.toggle('active');
     });
 
+    // Закриття меню при кліку на посилання
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function() {
             menuToggle.classList.remove('active');
             nav.classList.remove('active');
         });
     });
-    
+
+    // Закриття меню при кліку поза меню
+    document.addEventListener('click', function(e) {
+        if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
+            if (nav.classList.contains('active')) {
+                menuToggle.classList.remove('active');
+                nav.classList.remove('active');
+            }
+        }
+    });
+
+    // Закриття меню при скролі
+    window.addEventListener('scroll', function() {
+        if (nav.classList.contains('active')) {
+            menuToggle.classList.remove('active');
+            nav.classList.remove('active');
+        }
+    });
+
     initCarousel();
     // ВИДАЛЕНО: setupContactForm(); - більше не потрібна
 });

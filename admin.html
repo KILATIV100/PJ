@@ -357,6 +357,8 @@
             <ul class="sidebar-menu">
                 <li><a href="#" class="menu-link active" onclick="showDashboard()">📊 Dashboard</a></li>
                 <li><a href="#" class="menu-link" onclick="showOrders()">📦 Замовлення</a></li>
+                <li><a href="#" class="menu-link" onclick="showUsers()">👥 Користувачі</a></li>
+                <li><a href="#" class="menu-link" onclick="showProducts()">🏷️ Товари</a></li>
                 <li><a href="#" class="menu-link" onclick="showStats()">📈 Статистика</a></li>
                 <li><a href="#" class="menu-link" onclick="showSettings()">⚙️ Налаштування</a></li>
                 <li><a href="#" class="menu-link" onclick="logout()">🚪 Вихід</a></li>
@@ -612,10 +614,167 @@
         }
 
         // Функції для меню
-        function showDashboard() { console.log('Dashboard'); }
-        function showOrders() { console.log('Orders'); }
+        function showDashboard() {
+            const activeLinks = document.querySelectorAll('.menu-link');
+            activeLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('dashboardSection').style.display = 'block';
+            loadStats();
+        }
+
+        function showOrders() {
+            const activeLinks = document.querySelectorAll('.menu-link');
+            activeLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('dashboardSection').style.display = 'block';
+        }
+
+        function showUsers() {
+            const activeLinks = document.querySelectorAll('.menu-link');
+            activeLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const dashboard = document.getElementById('dashboardSection');
+            dashboard.innerHTML = `
+                <h2>Управління користувачами</h2>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="userSearch" placeholder="Пошук користувача..." style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="loadUsers()" style="padding: 10px 20px; margin-left: 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Пошук</button>
+                </div>
+                <div id="usersList" style="background: white; border-radius: 4px; padding: 20px;">Завантаження...</div>
+            `;
+            dashboard.style.display = 'block';
+            loadUsers();
+        }
+
+        function showProducts() {
+            const activeLinks = document.querySelectorAll('.menu-link');
+            activeLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const dashboard = document.getElementById('dashboardSection');
+            dashboard.innerHTML = `
+                <h2>Управління товарами</h2>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="productSearch" placeholder="Пошук товару..." style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="loadProducts()" style="padding: 10px 20px; margin-left: 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Пошук</button>
+                </div>
+                <div id="productsList" style="background: white; border-radius: 4px; padding: 20px;">Завантаження...</div>
+            `;
+            dashboard.style.display = 'block';
+            loadProducts();
+        }
+
         function showStats() { console.log('Stats'); }
         function showSettings() { console.log('Settings'); }
+
+        // Завантажити користувачів
+        async function loadUsers() {
+            try {
+                const search = document.getElementById('userSearch')?.value || '';
+                const response = await fetch(`${API_URL}/admin/users?search=${search}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const usersList = document.getElementById('usersList');
+                    const users = data.users;
+
+                    usersList.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #ddd;">
+                                    <th style="text-align: left; padding: 10px;">Ім'я</th>
+                                    <th style="text-align: left; padding: 10px;">Email</th>
+                                    <th style="text-align: left; padding: 10px;">Роль</th>
+                                    <th style="text-align: left; padding: 10px;">Замовлень</th>
+                                    <th style="text-align: center; padding: 10px;">Дія</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${users.map(user => `
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="padding: 10px;">${user.firstName} ${user.lastName}</td>
+                                        <td style="padding: 10px;">${user.email}</td>
+                                        <td style="padding: 10px;">
+                                            <span style="background: ${user.role === 'admin' ? '#ffebee' : '#e8f5e9'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                                ${user.role}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 10px;">${user.totalOrders || 0}</td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <button onclick="editUser('${user._id}')" style="padding: 6px 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                                Редагувати
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                console.error('Помилка завантаження користувачів:', error);
+                document.getElementById('usersList').innerHTML = 'Помилка завантаження користувачів';
+            }
+        }
+
+        // Завантажити товари
+        async function loadProducts() {
+            try {
+                const search = document.getElementById('productSearch')?.value || '';
+                const response = await fetch(`${API_URL}/admin/products?search=${search}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const productsList = document.getElementById('productsList');
+                    const products = data.products;
+
+                    productsList.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #ddd;">
+                                    <th style="text-align: left; padding: 10px;">Назва</th>
+                                    <th style="text-align: left; padding: 10px;">SKU</th>
+                                    <th style="text-align: left; padding: 10px;">Ціна</th>
+                                    <th style="text-align: left; padding: 10px;">Склад</th>
+                                    <th style="text-align: center; padding: 10px;">Дія</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${products.map(product => `
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="padding: 10px;">${product.name}</td>
+                                        <td style="padding: 10px;">${product.sku || '-'}</td>
+                                        <td style="padding: 10px;">${product.price} ₴</td>
+                                        <td style="padding: 10px;">
+                                            <span style="background: ${product.stock < 10 ? '#ffebee' : '#e8f5e9'}; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                                ${product.stock} шт
+                                            </span>
+                                        </td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <button onclick="editProduct('${product._id}')" style="padding: 6px 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                                Редагувати
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                console.error('Помилка завантаження товарів:', error);
+                document.getElementById('productsList').innerHTML = 'Помилка завантаження товарів';
+            }
+        }
+
+        function editUser(userId) {
+            alert('Редагування користувача: ' + userId);
+        }
+
+        function editProduct(productId) {
+            alert('Редагування товару: ' + productId);
+        }
 
         // Закрити модаль
         function closeModal() {
