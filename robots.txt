@@ -1,0 +1,41 @@
+# Pro Jet - Лазерне гравіювання та порізка
+# robots.txt для пошукових систем
+
+# Дозволити всім пошукавцям
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /gallery.html
+Allow: /admin/
+
+# Заборонити доступ до системних папок
+Disallow: /admin/users/
+Disallow: /api/private/
+Disallow: /*.json$
+Disallow: /temp/
+Disallow: /backup/
+
+# Повільні пошукавці
+User-agent: AhrefsBot
+Crawl-delay: 10
+Request-rate: 1/10s
+
+User-agent: SemrushBot
+Crawl-delay: 10
+Request-rate: 1/10s
+
+# Sitemap
+Sitemap: https://pro-jet.com.ua/sitemap.xml
+
+# Правила для конкретних пошукавців
+User-agent: Googlebot
+Allow: /
+Priority: 1.0
+
+User-agent: Yandexbot
+Allow: /
+Priority: 0.9
+
+User-agent: Bingbot
+Allow: /
+Priority: 0.8
