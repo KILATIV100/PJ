@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Jet - Реєстрація та Вхід</title>
+    <meta name="description" content="Реєстрація та вхід на платформу Pro Jet для замовлень лазерного гравіювання">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .password-requirements {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .requirement.valid {
+            color: var(--success);
+        }
+
+        .requirement.invalid {
+            color: var(--error);
+        }
+
+        .requirement-icon {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: #12a29f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(29, 180, 179, 0.3);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-footer button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #fee;
+            color: var(--error);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #efe;
+            color: var(--success);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 50px 15px;
+            }
+
+            .auth-card {
+                padding: 25px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <svg class="logo-svg" viewBox="0 0 100 100">
+                        <rect x="20" y="20" width="15" height="60" fill="#1db4b3"/>
+                        <rect x="40" y="20" width="15" height="60" fill="#1db4b3"/>
+                        <rect x="60" y="20" width="15" height="60" fill="#1db4b3"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="#1db4b3" stroke-width="3"/>
+                    </svg>
+                    <span class="logo-text">Pro Jet</span>
+                </a>
+                <nav class="nav" id="nav">
+                    <a href="index.html" class="nav-link">Головна</a>
+                    <a href="gallery.html" class="nav-link">Галерея</a>
+                    <a href="shop.html" class="nav-link">Магазин</a>
+                    <a href="profile.html" class="nav-link">Профіль</a>
+                </nav>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auth Content -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Вхід</button>
+                <button class="auth-tab" data-tab="register">Реєстрація</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm" data-form="login">
+                <div class="error-message" id="loginError"></div>
+
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="вашеім'я@приклад.укр" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Увійти</button>
+                </div>
+
+                <div class="form-footer">
+                    Забули пароль? <a href="#" style="color: var(--primary); cursor: pointer;">Скинути пароль</a>
+                </div>
+            </form>
+
+            <!-- Registration Form -->
+            <form class="auth-form" id="registerForm" data-form="register">
+                <div class="error-message" id="registerError"></div>
+                <div class="success-message" id="registerSuccess"></div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">Ім'я</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Іван" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Прізвище</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Петренко" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" placeholder="вашеім'я@приклад.укр" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" name="password" placeholder="••••••••" required>
+
+                    <div class="password-requirements" id="passwordReqs">
+                        <div class="requirement" id="reqLength">
+                            <span class="requirement-icon">✗</span>
+                            <span>Мінімум 6 символів</span>
+                        </div>
+                        <div class="requirement" id="reqUppercase">
+                            <span class="requirement-icon">✗</span>
+                            <span>Одна велика літера</span>
+                        </div>
+                        <div class="requirement" id="reqNumber">
+                            <span class="requirement-icon">✗</span>
+                            <span>Одна цифра</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPasswordConfirm">Підтвердіть пароль</label>
+                    <input type="password" id="registerPasswordConfirm" name="passwordConfirm" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Зареєструватися</button>
+                </div>
+
+                <div class="form-footer">
+                    Вже маєте акаунт?
+                    <button type="button" class="tab-switch" data-tab="login">Увійти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Auth Module
+        class AuthManager {
+            constructor() {
+                this.apiUrl = 'http://localhost:3000/api';
+                this.token = localStorage.getItem('auth-token');
+            }
+
+            async register(data) {
+                try {
+                    const response = await fetch(`${this.apiUrl}/users/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Помилка реєстрації');
+                    }
+
+                    // Зберегти токен
+                    localStorage.setItem('auth-token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    this.token = result.token;
+
+                    return result;
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            async login(email, password) {
+                try {
+                    const response = await fetch(`${this.apiUrl}/users/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Помилка входу');
+                    }
+
+                    // Зберегти токен
+                    localStorage.setItem('auth-token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    this.token = result.token;
+
+                    return result;
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            isAuthenticated() {
+                return !!localStorage.getItem('auth-token');
+            }
+
+            getUser() {
+                const user = localStorage.getItem('user');
+                return user ? JSON.parse(user) : null;
+            }
+
+            logout() {
+                localStorage.removeItem('auth-token');
+                localStorage.removeItem('user');
+                this.token = null;
+            }
+        }
+
+        const authManager = new AuthManager();
+
+        // Initialize auth forms
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+
+            // Tab switch buttons
+            document.querySelectorAll('.tab-switch').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await handleLogin();
+            });
+
+            // Register form
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await handleRegister();
+            });
+
+            // Password requirements
+            document.getElementById('registerPassword').addEventListener('input', function() {
+                updatePasswordRequirements(this.value);
+            });
+        });
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.querySelector(`[data-form="${tabName}"]`).classList.add('active');
+
+            // Clear errors
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.classList.remove('show');
+            });
+        }
+
+        function updatePasswordRequirements(password) {
+            const reqs = {
+                reqLength: password.length >= 6,
+                reqUppercase: /[A-Z]/.test(password),
+                reqNumber: /[0-9]/.test(password)
+            };
+
+            Object.entries(reqs).forEach(([id, valid]) => {
+                const el = document.getElementById(id);
+                if (valid) {
+                    el.classList.add('valid');
+                    el.classList.remove('invalid');
+                    el.querySelector('.requirement-icon').textContent = '✓';
+                } else {
+                    el.classList.add('invalid');
+                    el.classList.remove('valid');
+                    el.querySelector('.requirement-icon').textContent = '✗';
+                }
+            });
+        }
+
+        async function handleLogin() {
+            const form = document.getElementById('loginForm');
+            const errorDiv = document.getElementById('loginError');
+            const submitBtn = form.querySelector('.btn-submit');
+
+            try {
+                errorDiv.classList.remove('show');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span>';
+
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                const result = await authManager.login(email, password);
+
+                // Success - redirect to profile
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Увійти';
+            }
+        }
+
+        async function handleRegister() {
+            const form = document.getElementById('registerForm');
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+            const submitBtn = form.querySelector('.btn-submit');
+
+            try {
+                errorDiv.classList.remove('show');
+                successDiv.classList.remove('show');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span>';
+
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+                // Validation
+                if (!firstName || !lastName) {
+                    throw new Error('Будь ласка, заповніть ім\'я та прізвище');
+                }
+
+                if (password !== passwordConfirm) {
+                    throw new Error('Паролі не совпадають');
+                }
+
+                const result = await authManager.register({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    passwordConfirm
+                });
+
+                successDiv.textContent = 'Реєстрація успішна! Перенаправлення...';
+                successDiv.classList.add('show');
+
+                // Redirect to profile
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1500);
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Зареєструватися';
+            }
+        }
+
+        // Check if already logged in
+        if (authManager.isAuthenticated()) {
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>

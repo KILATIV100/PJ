@@ -24,6 +24,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -31,6 +32,7 @@ body {
     line-height: 1.6;
     color: var(--dark-gray);
     background: var(--white);
+    overflow-x: hidden;
 }
 
 .container {
@@ -854,7 +856,7 @@ body {
 
     .nav {
         position: fixed;
-        top: 60px;
+        top: 68px;
         left: 0;
         right: 0;
         background: white;
@@ -870,7 +872,7 @@ body {
     }
 
     .nav.active {
-        max-height: 100vh;
+        max-height: calc(100vh - 68px);
         overflow-y: auto;
     }
 
