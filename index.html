@@ -3,8 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Jet - Лазерне Гравіювання та Порізка</title>
+    <meta name="description" content="Pro Jet - професійне лазерне гравіювання та порізка матеріалів. Послуги для бізнесу та фізичних осіб. Фанера, акрил, шкіра, метал. Швидка обробка, точність 0,1 мм. м. Бровари, Київська область.">
+    <meta name="keywords" content="лазерне гравіювання, лазерна різка, гравіювання логотипа, порізка матеріалів, фанера, акрил, шкіра, метал, Бровари">
+    <meta name="author" content="Pro Jet">
+    <meta name="theme-color" content="#1db4b3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Open Graph для соціальних мереж -->
+    <meta property="og:title" content="Pro Jet - Лазерне Гравіювання та Порізка">
+    <meta property="og:description" content="Професійні послуги лазерного гравіювання та різання матеріалів. Точність, якість, швидкість доставки.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://pro-jet.com.ua">
+    <meta property="og:locale" content="uk_UA">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pro Jet - Лазерне Гравіювання та Порізка">
+    <meta name="twitter:description" content="Професійні послуги лазерного гравіювання та різання матеріалів.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://pro-jet.com.ua/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/ProJet_Logo_Square.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/ProJet_Logo_Square.svg">
+
+    <title>Pro Jet - Лазерне Гравіювання та Порізка | м. Бровари</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- JSON-LD структуровані дані -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Pro Jet",
+      "description": "Професійні послуги лазерного гравіювання та різання матеріалів",
+      "url": "https://pro-jet.com.ua",
+      "telephone": "+380676170619",
+      "email": "kilativ100@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "м. Бровари",
+        "addressRegion": "Київська область",
+        "addressCountry": "UA"
+      },
+      "priceRange": "₴₴",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "10:00",
+          "closes": "18:00"
+        }
+      ],
+      "sameAs": []
+    }
+    </script>
 </head>
 <body>
     <header class="header" id="top">
@@ -37,6 +98,7 @@
 
             <nav class="nav" id="nav">
                 <a href="#services" class="nav-link">Послуги</a>
+                <a href="gallery.html" class="nav-link">Галерея</a>
                 <a href="#tech-specs" class="nav-link">Вимоги</a>
                 <a href="#engraving-calc" class="nav-link">Гравіювання</a>
                 <a href="#cutting-calc" class="nav-link">Різання</a>
@@ -230,6 +292,7 @@
                             <option value="S_Low">S - Малий логотип (1x2 см, до 2 см²)</option>
                             <option value="M_Avg">M - Етикетка/Напис (3x5 см, до 15 см²)</option>
                             <option value="L_High">L - Повна графіка/Зображення (6x10 см, до 60 см²)</option>
+                            <option value="XL_Complex">XL - Комплексний дизайн (10x15 см, до 150 см²)</option>
                         </select>
                         <small>Ціна вказана за 1 об'єкт. Площа 60 см² = 6х10 см.</small>
                     </div>
@@ -280,9 +343,11 @@
                             <option value="plywood3">Фанера 3.0 мм</option>
                             <option value="plywood4">Фанера 4.0 мм</option>
                             <option value="acrylic3">Акрил 3.0 мм</option>
+                            <option value="acrylic5">Акрил 5.0 мм (товстий)</option>
                             <option value="leather3">Шкіра/Фетр 3.0 мм</option>
                             <option value="texon08">Таксон 0.8 мм</option>
                             <option value="texon2">Таксон 2.0 мм</option>
+                            <option value="cardboard">Картон/Паперопласт</option>
                         </select>
                     </div>
 
