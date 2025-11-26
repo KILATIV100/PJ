@@ -19,6 +19,7 @@ const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/user');
+const novaPoshtaRoutes = require('./routes/novaposhta');
 
 // Initialize Express app
 const app = express();
@@ -84,6 +85,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/novaposhta', novaPoshtaRoutes);
 
 // ============================================
 // FRONTEND ROUTES (для SPA)
