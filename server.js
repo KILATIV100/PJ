@@ -17,6 +17,7 @@ const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payment');
+const productRoutes = require('./routes/products');
 
 // Initialize Express app
 const app = express();
@@ -80,6 +81,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/products', productRoutes);
 
 // ============================================
 // FRONTEND ROUTES (для SPA)
@@ -92,6 +94,10 @@ app.get('/', (req, res) => {
 
 app.get('/gallery', (req, res) => {
   res.sendFile(path.join(__dirname, 'gallery.html'));
+});
+
+app.get('/shop', (req, res) => {
+  res.sendFile(path.join(__dirname, 'shop.html'));
 });
 
 app.get('/admin', (req, res) => {
