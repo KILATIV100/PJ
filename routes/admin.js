@@ -1,11 +1,13 @@
 /**
  * Admin Routes
- * Маршрути для адміністративного управління замовленнями
+ * Маршрути для адміністративного управління замовленнями, користувачами та товарами
  */
 
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const User = require('../models/User');
+const Product = require('../models/Product');
 
 /**
  * GET /api/admin/orders
@@ -197,6 +199,267 @@ router.get('/stats', async (req, res) => {
     });
   } catch (error) {
     console.error('Помилка отримання статистики:', error);
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/users
+ * Отримати всіх користувачів з фільтрацією
+ */
+router.get('/users', async (req, res) => {
+  try {
+    const { role = 'all', limit = 20, page = 1, search = '' } = req.query;
+
+    let filter = {};
+
+    if (role && role !== 'all') {
+      filter.role = role;
+    }
+
+    if (search) {
+      filter.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const skipCount = (page - 1) * limit;
+
+    const users = await User.find(filter)
+      .select('-password -passwordResetToken')
+      .limit(parseInt(limit))
+      .skip(skipCount)
+      .sort('-createdAt');
+
+    const totalCount = await User.countDocuments(filter);
+
+    res.json({
+      success: true,
+      count: users.length,
+      total: totalCount,
+      page: parseInt(page),
+      pages: Math.ceil(totalCount / limit),
+      users: users
+    });
+  } catch (error) {
+    console.error('Помилка отримання користувачів:', error);
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/users/:id
+ * Отримати профіль користувача
+ */
+router.get('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password -passwordResetToken');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Користувач не знайдений'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: user
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/users/:id
+ * Оновити роль користувача або статус
+ */
+router.put('/users/:id', async (req, res) => {
+  try {
+    const { role, isActive } = req.body;
+    const updateData = {};
+
+    if (role) updateData.role = role;
+    if (typeof isActive === 'boolean') updateData.isActive = isActive;
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).select('-password -passwordResetToken');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Користувач не знайдений'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Користувача оновлено',
+      user: user
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/products
+ * Отримати всі товари
+ */
+router.get('/products', async (req, res) => {
+  try {
+    const { category = 'all', limit = 20, page = 1, search = '' } = req.query;
+
+    let filter = {};
+
+    if (category && category !== 'all') {
+      filter.category = category;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { sku: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const skipCount = (page - 1) * limit;
+
+    const products = await Product.find(filter)
+      .limit(parseInt(limit))
+      .skip(skipCount)
+      .sort('-createdAt');
+
+    const totalCount = await Product.countDocuments(filter);
+
+    res.json({
+      success: true,
+      count: products.length,
+      total: totalCount,
+      page: parseInt(page),
+      pages: Math.ceil(totalCount / limit),
+      products: products
+    });
+  } catch (error) {
+    console.error('Помилка отримання товарів:', error);
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/products/:id
+ * Оновити товар
+ */
+router.put('/products/:id', async (req, res) => {
+  try {
+    const { name, price, stock, description } = req.body;
+    const updateData = {};
+
+    if (name) updateData.name = name;
+    if (price) updateData.price = price;
+    if (typeof stock === 'number') updateData.stock = stock;
+    if (description) updateData.description = description;
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Товар не знайдений'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Товар оновлено',
+      product: product
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/admin/dashboard
+ * Отримати дані для головної панелі
+ */
+router.get('/dashboard', async (req, res) => {
+  try {
+    // Замовлення статистика
+    const totalOrders = await Order.countDocuments({ isArchived: false });
+    const pendingOrders = await Order.countDocuments({ status: 'pending', isArchived: false });
+    const completedOrders = await Order.countDocuments({ status: 'completed', isArchived: false });
+
+    // Користувачі статистика
+    const totalUsers = await User.countDocuments();
+    const newUsersThisMonth = await User.countDocuments({
+      createdAt: { $gte: new Date(new Date().setDate(1)) }
+    });
+
+    // Товари статистика
+    const lowStockProducts = await Product.find({ stock: { $lt: 10 } }).limit(5);
+
+    // Доходи
+    const revenue = await Order.aggregate([
+      { $match: { 'payment.status': 'completed', isArchived: false } },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$pricing.totalPrice' }
+        }
+      }
+    ]);
+
+    res.json({
+      success: true,
+      dashboard: {
+        orders: {
+          total: totalOrders,
+          pending: pendingOrders,
+          completed: completedOrders
+        },
+        users: {
+          total: totalUsers,
+          newThisMonth: newUsersThisMonth
+        },
+        products: {
+          lowStock: lowStockProducts
+        },
+        revenue: {
+          total: revenue[0]?.total || 0
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Помилка отримання панелі:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
