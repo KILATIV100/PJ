@@ -116,6 +116,14 @@ app.get('/profile', (req, res) => {
   res.sendFile(path.join(__dirname, 'profile.html'));
 });
 
+app.get('/checkout', (req, res) => {
+  res.sendFile(path.join(__dirname, 'checkout.html'));
+});
+
+app.get('/admin-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-login.html'));
+});
+
 // ============================================
 // ERROR HANDLING
 // ============================================

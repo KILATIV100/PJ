@@ -36,7 +36,7 @@ const OrderSchema = new mongoose.Schema({
   // Тип послуги
   service: {
     type: String,
-    enum: ['engraving', 'cutting', 'design'],
+    enum: ['engraving', 'cutting', 'design', 'shop', 'consultation'],
     required: true
   },
 
@@ -63,6 +63,15 @@ const OrderSchema = new mongoose.Schema({
     description: String,
     requirements: String
   },
+
+  // Товари з магазину
+  shopItems: [{
+    productId: mongoose.Schema.Types.ObjectId,
+    name: String,
+    price: Number,
+    quantity: Number,
+    category: String
+  }],
 
   // Файли
   files: [{
