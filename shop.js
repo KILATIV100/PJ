@@ -334,70 +334,20 @@ async function checkout() {
     return;
   }
 
-  // Отримати інформацію про клієнта
-  const name = prompt('Ваше ім\'я:');
-  if (!name) return;
-
-  const email = prompt('Ваш email:');
-  if (!email) return;
-
-  const phone = prompt('Ваш телефон (+380...):');
-  if (!phone) return;
-
-  // Форматування замовлення
-  const orderData = {
-    customer: {
-      name: name,
-      email: email,
-      phone: phone
-    },
+  // Зберегти кошик в sessionStorage для checkout сторінки
+  sessionStorage.setItem('pro-jet-order', JSON.stringify({
     service: 'shop',
-    shopItems: cart.map(item => ({
-      productId: item.id,
+    items: cart.map(item => ({
+      id: item.id,
       name: item.name,
       price: item.price,
-      quantity: item.quantity
-    })),
-    pricing: {
-      basePrice: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-      discount: 0,
-      totalPrice: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-      currency: 'UAH'
-    },
-    payment: {
-      method: 'fondy',
-      status: 'pending'
-    }
-  };
+      quantity: item.quantity,
+      category: item.category
+    }))
+  }));
 
-  // Отправить на сервер
-  try {
-    const response = await fetch('http://localhost:3000/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      showNotification(`✅ Замовлення ${data.order.orderNumber} оформлено успішно!`);
-      cart = [];
-      saveCart();
-      updateCartUI();
-      toggleCart();
-
-      // Редірект на платіж
-      setTimeout(() => {
-        window.location.href = `index.html#payment?order=${data.order._id}`;
-      }, 2000);
-    } else {
-      showNotification('❌ Помилка при оформленні замовлення', 'error');
-    }
-  } catch (error) {
-    console.error('Помилка:', error);
-    showNotification('❌ Помилка сервера', 'error');
-  }
+  // Редірект на checkout
+  window.location.href = 'checkout.html';
 }
 
 /**
