@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pro Jet Магазин - сувенірна продукція з персоналізацією. Кружки, ручки, значки, брелки та інші товари з гравіюванням.">
+    <meta name="keywords" content="магазин сувенірів, персоналізовані подарунки, кружки, ручки, значки, брелки">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Pro Jet Магазин - Персоналізовані Сувеніри">
+    <meta property="og:description" content="Купуйте сувенірну продукцію з гравіюванням вашого логотипу або тексту.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pro-jet.com.ua/shop.html">
+
+    <title>Магазин Сувенірів - Pro Jet</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .shop-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .shop-hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .shop-hero p {
+            font-size: 18px;
+            margin-bottom: 0;
+        }
+
+        .shop-container {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .shop-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-gray);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(29, 180, 179, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e0f7f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: rgba(29, 180, 179, 0.5);
+        }
+
+        .product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-category {
+            display: inline-block;
+            background: var(--light-gray);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .product-description {
+            font-size: 13px;
+            color: var(--dark-gray);
+            margin-bottom: 12px;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .product-specs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #999;
+            flex-wrap: wrap;
+        }
+
+        .product-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .price-tag {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .add-to-cart-btn {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .cart-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(29, 180, 179, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+            background: var(--accent);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Кошик модаль */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .cart-modal.active {
+            display: flex;
+        }
+
+        .cart-panel {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--dark);
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .cart-items {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .qty-btn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--dark-gray);
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .shop-hero h1 {
+                font-size: 28px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .cart-panel {
+                max-width: 100%;
+            }
+
+            .cart-icon {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .shop-filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header" id="top">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs>
+                        <style>
+                            .st1 { fill: #1db4b3; }
+                            .st2 { fill: #081b26; }
+                        </style>
+                    </defs>
+                    <rect width="200" height="200" fill="#FFFFFF"/>
+                    <g transform="translate(35, 35) scale(0.4)">
+                        <path class="st2" d="M165.38,84.75c-1.16-3.69-2.59-7.22-4.29-10.6-11.02-22.01-32.92-36.99-58.11-36.99H18.2v209.15l43.86-37.12,5.55-4.7v-120.05h31.41c11.95,0,21.66,11.12,21.66,24.83s-9.71,24.81-21.66,24.81h-21.66v41.97h25.62c3.99,0,7.9-.36,11.7-1.1-26.61-5.05,47.65-27,52.8-54.98.8-4.32,1.22-8.79,1.22-13.36v-.62c-.06-7.42-1.22-14.56-3.32-21.24Z"/>
+                        <path class="st1" d="M57.1,104.91c0,8.22-6.66,14.9-14.88,14.9-.29,0-.58,0-.87-.02-1.02-.06-2.05-.23-3.01-.48v-.02c-6.35-1.7-11.03-7.51-11.03-14.38s5.02-13.09,11.74-14.54c1.02-.23,2.09-.35,3.17-.35,1.35,0,2.66.17,3.92.52,6.31,1.72,10.96,7.49,10.96,14.37Z"/>
+                        <path class="st1" d="M157.98,104.68c0,1.37-.19,2.7-.54,3.95-1.71,6.3-7.49,10.93-14.34,10.93-2.3,0-4.48-.52-6.43-1.45-5-2.39-8.48-7.51-8.48-13.43,0-8.23,6.68-14.89,14.91-14.89s14.88,6.66,14.88,14.89Z"/>
+                        <path class="st2" d="M265.32,37.16l-46.73,39.55v98.21c0,14.73-15.93,26.66-35.54,26.66-.56,0-1.11,0-1.66-.03-18.87-.65-33.89-12.32-33.89-26.63,0-1.26.12-2.51.35-3.73-11.22,9.4-25.39,15.02-40.82,15.02-1.06,0-2.1-.02-3.14-.08,3.57,20.86,17.58,38.75,37.23,49.5,12.51,6.86,27.32,10.82,43.18,10.82,31.38,0,58.6-15.49,72.17-38.15,5.87-9.79,9.17-20.93,9.17-32.75V37.16h-.32Z"/>
+                        <path class="st1" d="M196.94,224.82c0,8.22-6.68,14.91-14.91,14.91s-14.89-6.68-14.89-14.91,6.66-14.89,14.89-14.89,14.91,6.66,14.91,14.89Z"/>
+                    </g>
+                </svg>
+                <span class="logo-text">Pro Jet</span>
+            </a>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav" id="nav">
+                <a href="index.html#services" class="nav-link">Послуги</a>
+                <a href="gallery.html" class="nav-link">Галерея</a>
+                <a href="shop.html" class="nav-link">Магазин</a>
+                <a href="index.html#engraving-calc" class="nav-link">Калькулятори</a>
+                <a href="index.html#contact" class="nav-link">Контакти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Shop Hero -->
+    <section class="shop-hero">
+        <div class="container">
+            <h1>🛍️ Магазин Сувенірів</h1>
+            <p>Персоналізовані подарунки з вашим логотипом та гравіюванням</p>
+        </div>
+    </section>
+
+    <!-- Shop Content -->
+    <section class="shop-container">
+        <div class="container">
+            <!-- Filters -->
+            <div class="shop-filters">
+                <div class="filter-group">
+                    <button class="filter-btn active" onclick="filterProducts('all')">Всі</button>
+                    <button class="filter-btn" onclick="filterProducts('cups')">Кружки</button>
+                    <button class="filter-btn" onclick="filterProducts('pens')">Ручки</button>
+                    <button class="filter-btn" onclick="filterProducts('badges')">Значки</button>
+                    <button class="filter-btn" onclick="filterProducts('keychains')">Брелки</button>
+                </div>
+                <select class="sort-select" onchange="sortProducts(this.value)">
+                    <option value="popular">За популярністю</option>
+                    <option value="price-asc">За ціною (↑)</option>
+                    <option value="price-desc">За ціною (↓)</option>
+                    <option value="new">Нові товари</option>
+                </select>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Товари генеруються JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Icon -->
+    <div class="cart-icon" onclick="toggleCart()">
+        🛒
+        <div class="cart-count" id="cartCount" style="display: none;">0</div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal" onclick="if(event.target === this) toggleCart()">
+        <div class="cart-panel">
+            <div class="cart-header">
+                <h2>Кошик</h2>
+                <button class="cart-close" onclick="toggleCart()">✕</button>
+            </div>
+
+            <div class="cart-items" id="cartItems">
+                <div class="cart-empty">Кошик порожній</div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Всього:</span>
+                    <span id="cartTotal">0 ₴</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">Оформити замовлення</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Pro Jet. Усі права захищені.</p>
+            <p>Магазин сувенірної продукції | Бровари, Київська область</p>
+        </div>
+    </footer>
+
+    <script src="shop.js"></script>
+</body>
+</html>
