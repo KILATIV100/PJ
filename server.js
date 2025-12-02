@@ -18,6 +18,9 @@ const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/products');
 const novaPoshtaRoutes = require('./routes/novaposhta');
 
+// Import services
+const { initializeTelegramBot } = require('./services/telegram');
+
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -136,6 +139,9 @@ const startServer = async () => {
   try {
     // Підключитися до БД
     await connectDatabase();
+
+    // Ініціалізувати Telegram бота
+    initializeTelegramBot();
 
     // Запустити сервер
     app.listen(PORT, HOST, () => {
