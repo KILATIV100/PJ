@@ -14,11 +14,8 @@ require('dotenv').config();
 
 // Import routes
 const orderRoutes = require('./routes/orders');
-const authRoutes = require('./routes/auth');
-const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/products');
-const userRoutes = require('./routes/user');
 const novaPoshtaRoutes = require('./routes/novaposhta');
 
 // Initialize Express app
@@ -80,11 +77,8 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/orders', orderRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/novaposhta', novaPoshtaRoutes);
 
 // ============================================
@@ -104,24 +98,8 @@ app.get('/shop', (req, res) => {
   res.sendFile(path.join(__dirname, 'shop.html'));
 });
 
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/auth', (req, res) => {
-  res.sendFile(path.join(__dirname, 'auth.html'));
-});
-
-app.get('/profile', (req, res) => {
-  res.sendFile(path.join(__dirname, 'profile.html'));
-});
-
 app.get('/checkout', (req, res) => {
   res.sendFile(path.join(__dirname, 'checkout.html'));
-});
-
-app.get('/admin-login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-login.html'));
 });
 
 // ============================================
