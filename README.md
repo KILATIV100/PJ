@@ -89,6 +89,8 @@ POST /api/payment/liqpay      - Платіж LiqPay (опціонально)
 
 ## 📚 Документація
 
+- [QUICK_LOCAL_SETUP.md](./QUICK_LOCAL_SETUP.md) - ⭐ Швидкий старт (10 хвилин)
+- [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Детальна інструкція БД
 - [TELEGRAM_SETUP.md](./TELEGRAM_SETUP.md) - Налаштування Telegram бота
 - [RAILWAY_INSTRUCTIONS.txt](./RAILWAY_INSTRUCTIONS.txt) - Розгортання на Railway
 - [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) - Детальний гайд Railway
