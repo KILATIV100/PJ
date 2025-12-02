@@ -1,0 +1,28 @@
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+  publish = "."
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["netlify/lib/**"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["*"], Country = ["*"]}
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+[dev]
+  command = "npm start"
+  port = 3000
+  publish = "."
+  functions = "netlify/functions"
