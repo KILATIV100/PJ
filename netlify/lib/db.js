@@ -1,13 +1,9 @@
 /**
- * Neon PostgreSQL Connection Library
- * Підключення до Neon database через serverless
+ * Railway PostgreSQL Connection Library
+ * Підключення до Railway PostgreSQL database через Netlify Functions
  */
 
-const { Pool, neonConfig } = require('@neondatabase/serverless');
-const ws = require('ws');
-
-// Налаштування для WebSocket (потрібно для serverless)
-neonConfig.webSocketConstructor = ws;
+const { Pool } = require('pg');
 
 let pool;
 
@@ -24,7 +20,9 @@ function getPool() {
 
     pool = new Pool({
       connectionString,
-      ssl: true
+      ssl: {
+        rejectUnauthorized: false // Railway використовує self-signed SSL
+      }
     });
   }
 
