@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const nodemailer = require('nodemailer');
+const { sendOrderNotification } = require('../services/telegram');
 
 // ============================================
 // EMAIL CONFIGURATION
@@ -72,7 +73,14 @@ router.post('/', async (req, res) => {
     // Зберегти в БД
     await order.save();
 
-    // Відправити email клієнту
+    // Відправити сповіщення у Telegram
+    try {
+      await sendOrderNotification(req.body);
+    } catch (telegramError) {
+      console.error('Помилка відправки у Telegram:', telegramError.message);
+    }
+
+    // Відправити email клієнту (опціонально)
     try {
       await transporter.sendMail({
         from: process.env.SMTP_FROM,
@@ -88,28 +96,7 @@ router.post('/', async (req, res) => {
         `
       });
     } catch (emailError) {
-      console.error('Помилка відправки email:', emailError.message);
-    }
-
-    // Відправити email адміністратору
-    try {
-      await transporter.sendMail({
-        from: process.env.SMTP_FROM,
-        to: process.env.ADMIN_EMAIL,
-        subject: `Нове замовлення: ${order.orderNumber}`,
-        html: `
-          <h2>Нове замовлення</h2>
-          <p><strong>Номер замовлення:</strong> ${order.orderNumber}</p>
-          <p><strong>Клієнт:</strong> ${customer.name}</p>
-          <p><strong>Email:</strong> ${customer.email}</p>
-          <p><strong>Телефон:</strong> ${customer.phone}</p>
-          <p><strong>Послуга:</strong> ${service}</p>
-          <p><strong>Сума:</strong> ${order.pricing.totalPrice} ${order.pricing.currency}</p>
-          <p><a href="https://pro-jet.com.ua/admin">Перейти до адмін-панелі</a></p>
-        `
-      });
-    } catch (emailError) {
-      console.error('Помилка відправки email адміну:', emailError.message);
+      console.error('⚠️  Помилка відправки email:', emailError.message);
     }
 
     // Відповідь

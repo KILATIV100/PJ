@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro Jet - Оформлення Замовлення</title>
-    <meta name="description" content="Оформіть замовлення лазерного гравіювання або різки на платформі Pro Jet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .checkout-container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -17,7 +16,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
         }
 
         .checkout-form {
@@ -36,23 +34,21 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark-gray);
+            font-size: 14px;
         }
 
         .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
             font-family: inherit;
-            transition: all 0.3s ease;
         }
 
         .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(29, 180, 179, 0.1);
@@ -65,7 +61,7 @@
         }
 
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid #f0f0f0;
         }
@@ -75,53 +71,16 @@
         }
 
         .form-section h3 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .auth-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 4px;
-        }
-
-        .auth-toggle button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: white;
-            color: var(--dark-gray);
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .auth-toggle button.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .auth-section {
-            display: none;
-        }
-
-        .auth-section.active {
-            display: block;
         }
 
         .message {
             padding: 12px;
             border-radius: 4px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: none;
         }
 
@@ -164,11 +123,12 @@
         .item-name {
             font-weight: 500;
             color: var(--dark);
+            font-size: 14px;
         }
 
-        .item-quantity {
+        .item-qty {
             color: #999;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .item-price {
@@ -180,17 +140,21 @@
             margin-top: 20px;
             padding-top: 20px;
             border-top: 2px solid var(--primary);
-            font-size: 18px;
-            font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: var(--dark);
         }
 
+        .total-label {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
         .total-value {
-            color: var(--primary);
             font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .btn-submit {
@@ -203,7 +167,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 25px;
+            margin-top: 20px;
             transition: all 0.3s ease;
         }
 
@@ -219,10 +183,19 @@
             transform: none;
         }
 
-        .help-text {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
+        .telegram-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 13px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .telegram-info strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
         }
 
         @media (max-width: 768px) {
@@ -233,6 +206,7 @@
             .order-summary {
                 position: static;
                 margin-bottom: 20px;
+                order: -1;
             }
 
             .form-row {
@@ -258,7 +232,7 @@
                 <nav class="nav" id="nav">
                     <a href="index.html" class="nav-link">Головна</a>
                     <a href="shop.html" class="nav-link">Магазин</a>
-                    <a href="auth.html" class="nav-link">Профіль</a>
+                    <a href="gallery.html" class="nav-link">Галерея</a>
                 </nav>
                 <button class="menu-toggle" id="menuToggle">
                     <span></span>
@@ -271,156 +245,76 @@
 
     <!-- Checkout -->
     <div class="checkout-container">
-        <h1 style="margin-bottom: 30px;">Оформлення Замовлення</h1>
+        <h1 style="margin-bottom: 30px;">✅ Оформлення Замовлення</h1>
 
         <div class="checkout-grid">
             <!-- Form -->
             <div>
                 <div class="message" id="message"></div>
 
-                <!-- Auth Toggle -->
-                <div class="auth-toggle">
-                    <button class="active" onclick="switchAuthMode('guest')">👤 Без реєстрації</button>
-                    <button onclick="switchAuthMode('login')">🔓 Вхід</button>
-                    <button onclick="switchAuthMode('register')">✨ Реєстрація</button>
-                </div>
-
-                <!-- Guest Mode -->
-                <div class="auth-section active" id="guestSection">
-                    <form id="guestForm">
-                        <div class="form-section">
-                            <h3>👤 Контактна інформація</h3>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName">Ім'я *</label>
-                                    <input type="text" id="firstName" name="firstName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Прізвище *</label>
-                                    <input type="text" id="lastName" name="lastName" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="guestEmail">Email *</label>
-                                <input type="email" id="guestEmail" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="guestPhone">Телефон *</label>
-                                <input type="tel" id="guestPhone" name="phone" placeholder="+380 50 123 45 67" required>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h3>📍 Адреса доставки</h3>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="city">Місто *</label>
-                                    <input type="text" id="city" name="city" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="region">Область</label>
-                                    <input type="text" id="region" name="region">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="street">Адреса *</label>
-                                <input type="text" id="street" name="street" required>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h3>🚚 Доставка</h3>
-                            <div class="form-group">
-                                <label for="deliveryMethod">Спосіб доставки *</label>
-                                <select id="deliveryMethod" name="deliveryMethod" required>
-                                    <option value="">Виберіть спосіб доставки</option>
-                                    <option value="novaposhta">Нова Пошта</option>
-                                    <option value="pickup">Самовивіз</option>
-                                    <option value="courier">Кур'єр</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h3>💳 Спосіб оплати</h3>
-                            <div class="form-group">
-                                <label for="paymentMethod">Оплата *</label>
-                                <select id="paymentMethod" name="paymentMethod" required>
-                                    <option value="fondy">Fondy</option>
-                                    <option value="liqpay">LiqPay</option>
-                                    <option value="bank-transfer">Переказ на рахунок</option>
-                                </select>
-                                <div class="help-text">Оплата буде оброблена після оформлення замовлення</div>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h3>📝 Додаткові примітки</h3>
-                            <div class="form-group">
-                                <label for="notes">Примітки до замовлення</label>
-                                <textarea id="notes" name="notes" rows="4" placeholder="Напишіть будь-які спеціальні вимоги..."></textarea>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn-submit">Оформити Замовлення</button>
-                    </form>
-                </div>
-
-                <!-- Login Section -->
-                <div class="auth-section" id="loginSection">
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label for="loginEmail">Email</label>
-                            <input type="email" id="loginEmail" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="loginPassword">Пароль</label>
-                            <input type="password" id="loginPassword" name="password" required>
-                        </div>
-                        <button type="submit" class="btn-submit">Увійти та Оформити</button>
-                    </form>
-                </div>
-
-                <!-- Register Section -->
-                <div class="auth-section" id="registerSection">
-                    <form id="registerForm">
+                <form id="checkoutForm">
+                    <div class="form-section">
+                        <h3>👤 Ваші контакти</h3>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="regFirstName">Ім'я</label>
-                                <input type="text" id="regFirstName" name="firstName" required>
+                                <label for="firstName">Ім'я *</label>
+                                <input type="text" id="firstName" name="firstName" required>
                             </div>
                             <div class="form-group">
-                                <label for="regLastName">Прізвище</label>
-                                <input type="text" id="regLastName" name="lastName" required>
+                                <label for="lastName">Прізвище *</label>
+                                <input type="text" id="lastName" name="lastName" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="regEmail">Email</label>
-                            <input type="email" id="regEmail" name="email" required>
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="regPassword">Пароль</label>
-                            <input type="password" id="regPassword" name="password" required>
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+380 50 123 45 67" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>📍 Адреса доставки</h3>
+                        <div class="form-group">
+                            <label for="city">Місто *</label>
+                            <input type="text" id="city" name="city" placeholder="Київ" required>
                         </div>
                         <div class="form-group">
-                            <label for="regPasswordConfirm">Підтвердіть пароль</label>
-                            <input type="password" id="regPasswordConfirm" name="passwordConfirm" required>
+                            <label for="address">Адреса *</label>
+                            <input type="text" id="address" name="address" placeholder="вул. Крещатик, 1" required>
                         </div>
-                        <button type="submit" class="btn-submit">Реєстрація та Оформління</button>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>📝 Коментар</h3>
+                        <div class="form-group">
+                            <label for="notes">Додаткові вимоги</label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="Напишіть ваші побажання..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">📤 Відправити замовлення</button>
+
+                    <div class="telegram-info">
+                        <strong>📱 Як це працює?</strong>
+                        Ваше замовлення буде відправлено у Telegram.
+                        Ми зв'яжемся з вами протягом години для підтвердження.
+                    </div>
+                </form>
             </div>
 
             <!-- Order Summary -->
             <div class="order-summary">
-                <h3>Ваше Замовлення</h3>
+                <h3>📦 Ваше Замовлення</h3>
                 <div id="orderItems">
                     <div class="order-item">
                         <span class="item-name">Завантаження...</span>
                     </div>
                 </div>
                 <div class="order-total">
-                    <span>Всього:</span>
+                    <span class="total-label">Всього:</span>
                     <span class="total-value" id="totalPrice">0₴</span>
                 </div>
             </div>
@@ -436,16 +330,13 @@
             total: 0
         };
 
-        // Ініціалізація
         document.addEventListener('DOMContentLoaded', function() {
             loadOrderData();
-            setupForms();
+            setupForm();
         });
 
         function loadOrderData() {
-            // Отримати дані з sessionStorage або localStorage
             const stored = sessionStorage.getItem('pro-jet-order') || localStorage.getItem('pro-jet-cart');
-
             if (stored) {
                 try {
                     const data = JSON.parse(stored);
@@ -455,8 +346,6 @@
                     console.error('Помилка завантаження замовлення:', e);
                 }
             }
-
-            // Оновити UI
             updateOrderSummary();
         }
 
@@ -464,7 +353,7 @@
             const itemsDiv = document.getElementById('orderItems');
 
             if (orderData.items.length === 0) {
-                itemsDiv.innerHTML = '<div class="order-item"><span>Кошик порожній</span></div>';
+                itemsDiv.innerHTML = '<div class="order-item"><span class="item-name">Кошик порожній</span></div>';
                 document.getElementById('totalPrice').textContent = '0₴';
                 return;
             }
@@ -475,12 +364,11 @@
             orderData.items.forEach(item => {
                 const itemTotal = (item.price || item.basePrice || 0) * (item.quantity || 1);
                 total += itemTotal;
-
                 html += `
                     <div class="order-item">
                         <div>
-                            <div class="item-name">${item.name || item.title || 'Товар'}</div>
-                            <div class="item-quantity">${item.quantity || 1} × ${item.price || item.basePrice || 0}₴</div>
+                            <div class="item-name">${item.name || 'Товар'}</div>
+                            <div class="item-qty">${item.quantity || 1} × ${item.price || item.basePrice || 0}₴</div>
                         </div>
                         <div class="item-price">${itemTotal}₴</div>
                     </div>
@@ -492,23 +380,11 @@
             document.getElementById('totalPrice').textContent = total + '₴';
         }
 
-        function switchAuthMode(mode) {
-            // Оновити кнопки
-            document.querySelectorAll('.auth-toggle button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // Показати правильну секцію
-            document.querySelectorAll('.auth-section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(mode + 'Section').classList.add('active');
+        function setupForm() {
+            document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
         }
 
-        function setupForms() {
-            document.getElementById('guestForm').addEventListener('submit', handleGuestCheckout);
-            document.getElementById('loginForm').addEventListener('submit', handleLoginCheckout);
-            document.getElementById('registerForm').addEventListener('submit', handleRegisterCheckout);
-        }
-
-        async function handleGuestCheckout(e) {
+        async function handleCheckout(e) {
             e.preventDefault();
 
             const formData = new FormData(e.target);
@@ -523,8 +399,8 @@
                             name: `${data.firstName} ${data.lastName}`,
                             email: data.email,
                             phone: data.phone,
-                            address: data.street,
-                            city: data.city
+                            city: data.city,
+                            address: data.address
                         },
                         service: orderData.service,
                         pricing: {
@@ -533,29 +409,24 @@
                             totalPrice: orderData.total,
                             currency: 'UAH'
                         },
-                        payment: {
-                            method: data.paymentMethod,
-                            status: 'pending'
-                        },
-                        delivery: {
-                            method: data.deliveryMethod,
-                            city: data.city
-                        },
                         notes: data.notes,
-                        shopItems: orderData.service === 'shop' ? orderData.items : undefined
+                        items: orderData.items
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    showMessage(`✅ Замовлення ${result.order.orderNumber} оформлено!`, 'success');
+                    showMessage(`✅ Замовлення ${result.order.orderNumber} відправлено!
+
+Ми зв'яжемся з вами протягом години.`, 'success');
+
                     localStorage.removeItem('pro-jet-cart');
                     sessionStorage.removeItem('pro-jet-order');
 
                     setTimeout(() => {
-                        window.location.href = `index.html?order=${result.order._id}`;
-                    }, 2000);
+                        window.location.href = 'index.html';
+                    }, 3000);
                 } else {
                     showMessage('❌ ' + (result.message || 'Помилка при оформленні'), 'error');
                 }
@@ -565,24 +436,10 @@
             }
         }
 
-        async function handleLoginCheckout(e) {
-            e.preventDefault();
-            alert('Функція входу з оформленням замовлення - скоро!');
-        }
-
-        async function handleRegisterCheckout(e) {
-            e.preventDefault();
-            alert('Функція реєстрації з оформленням замовлення - скоро!');
-        }
-
         function showMessage(text, type) {
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.className = `message show ${type}`;
-
-            setTimeout(() => {
-                msg.classList.remove('show');
-            }, 5000);
         }
     </script>
 </body>
