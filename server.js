@@ -17,9 +17,11 @@ const orderRoutes = require('./routes/orders');
 const paymentRoutes = require('./routes/payment');
 const productRoutes = require('./routes/products');
 const novaPoshtaRoutes = require('./routes/novaposhta');
+const telegramRoutes = require('./routes/telegram');
 
 // Import services
 const { initializeTelegramBot } = require('./services/telegram');
+const { initBot } = require('./services/telegram-bot');
 
 // Initialize Express app
 const app = express();
@@ -83,6 +85,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/novaposhta', novaPoshtaRoutes);
+app.use('/api/telegram', telegramRoutes);
 
 // ============================================
 // FRONTEND ROUTES (для SPA)
@@ -140,8 +143,20 @@ const startServer = async () => {
     // Підключитися до БД
     await connectDatabase();
 
-    // Ініціалізувати Telegram бота
+    // Ініціалізувати Telegram бота (старий, для сповіщень)
     initializeTelegramBot();
+
+    // Ініціалізувати інтерактивного Telegram бота
+    const webhookUrl = process.env.WEBHOOK_URL || process.env.RAILWAY_STATIC_URL;
+    const useWebhook = process.env.NODE_ENV === 'production' && webhookUrl;
+
+    if (useWebhook) {
+      console.log('🤖 Ініціалізація Telegram бота (webhook mode)...');
+      initBot(true, webhookUrl);
+    } else {
+      console.log('🤖 Ініціалізація Telegram бота (polling mode)...');
+      initBot(false);
+    }
 
     // Запустити сервер
     app.listen(PORT, HOST, () => {
@@ -152,13 +167,14 @@ const startServer = async () => {
 
   URL: http://${HOST}:${PORT}
   Environment: ${process.env.NODE_ENV || 'development'}
+  Telegram Bot: ${useWebhook ? 'Webhook' : 'Polling'}
 
   📌 API Endpoints:
      • GET  /api/health              - Перевірка статусу
      • POST /api/orders              - Створити замовлення
      • GET  /api/orders/:id          - Отримати замовлення
-     • POST /api/auth/login          - Вхід
-     • POST /api/admin/orders        - Управління замовленнями
+     • POST /api/telegram/webhook    - Telegram webhook
+     • GET  /api/telegram/set-webhook - Встановити webhook
      • POST /api/payment/fondy       - Платіж Fondy
      • POST /api/payment/liqpay      - Платіж LiqPay
       `);
