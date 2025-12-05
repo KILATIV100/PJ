@@ -52,9 +52,15 @@ app.use(express.static(path.join(__dirname, '/')));
 // ============================================
 
 const connectDatabase = async () => {
-  try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/pro-jet';
+  // MongoDB є опціональним - якщо не встановлено MONGODB_URI, пропускаємо
+  const mongoUri = process.env.MONGODB_URI;
 
+  if (!mongoUri) {
+    console.log('⚠️  MongoDB URI не встановлено, використовується PostgreSQL');
+    return;
+  }
+
+  try {
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
@@ -62,8 +68,9 @@ const connectDatabase = async () => {
 
     console.log('✅ MongoDB підключена успішно!');
   } catch (error) {
-    console.error('❌ Помилка підключення MongoDB:', error.message);
-    process.exit(1);
+    console.warn('⚠️  Помилка підключення MongoDB:', error.message);
+    console.log('ℹ️  Продовжуємо без MongoDB (використовується PostgreSQL)');
+    // Не виходимо з процесу, дозволяємо серверу працювати з PostgreSQL
   }
 };
 
@@ -194,7 +201,13 @@ startServer();
 
 process.on('SIGINT', async () => {
   console.log('\n📍 Отримано сигнал SIGINT, завершення роботи...');
-  await mongoose.connection.close();
+
+  // Закриваємо MongoDB тільки якщо він підключений
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.close();
+    console.log('✅ MongoDB з\'єднання закрито');
+  }
+
   process.exit(0);
 });
 
