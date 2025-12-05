@@ -13,15 +13,85 @@ const { sendOrderNotification } = require('../services/telegram');
 // EMAIL CONFIGURATION
 // ============================================
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD
+let transporter = null;
+
+// Ініціалізація email транспорту
+const initializeEmailTransport = () => {
+  try {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      console.warn('⚠️  Email config не встановлено. Email сповіщення відключені.');
+      return null;
+    }
+
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT || 587,
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD
+      }
+    });
+
+    return transporter;
+  } catch (error) {
+    console.error('❌ Помилка ініціалізації email транспорту:', error.message);
+    return null;
   }
-});
+};
+
+// Ініціалізувати при запуску
+initializeEmailTransport();
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Відправити email клієнту
+ */
+const sendOrderEmail = async (order, customerEmail) => {
+  if (!transporter) {
+    console.warn('⚠️  Email транспорт недоступний, пропуск відправки');
+    return false;
+  }
+
+  try {
+    const mailOptions = {
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: customerEmail,
+      subject: `Замовлення ${order.orderNumber} прийнято!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+          <h2 style="color: #2c3e50;">Дякуємо за замовлення!</h2>
+          <p>Ваше замовлення <strong style="color: #e74c3c;">${order.orderNumber}</strong> успішно прийнято.</p>
+          
+          <div style="background-color: #ecf0f1; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p><strong>Номер замовлення:</strong> ${order.orderNumber}</p>
+            <p><strong>Дата:</strong> ${new Date(order.createdAt).toLocaleString('uk-UA')}</p>
+            <p><strong>Статус:</strong> ${order.status}</p>
+            <p><strong>Сума:</strong> ${order.pricing.totalPrice} ${order.pricing.currency || 'UAH'}</p>
+          </div>
+
+          <p>Ми скоро зв'яжемося з вами для уточнення деталей виробництва.</p>
+          
+          <p style="color: #7f8c8d; font-size: 12px; margin-top: 30px;">
+            З повагою,<br/>
+            <strong>Pro Jet Team</strong><br/>
+            Платформа для лазерного гравіювання та різки
+          </p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Email відправлено на:', customerEmail);
+    return true;
+  } catch (error) {
+    console.error('❌ Помилка відправки email:', error.message);
+    return false;
+  }
+};
 
 // ============================================
 // ROUTES
@@ -45,7 +115,7 @@ router.post('/', async (req, res) => {
       notes
     } = req.body;
 
-    // Валідація
+    // Валідація обов'язкових полів
     if (!customer || !service || !pricing) {
       return res.status(400).json({
         error: 'Validation Error',
@@ -53,60 +123,81 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Валідація email
+    if (!customer.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Невірний формат email'
+      });
+    }
+
+    // Валідація послуги
+    const validServices = ['engraving', 'cutting', 'design', 'combined'];
+    if (!validServices.includes(service)) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: `Послуга повинна бути однією з: ${validServices.join(', ')}`
+      });
+    }
+
     // Створити замовлення
     const order = new Order({
-      customer,
-      service,
-      engraving: service === 'engraving' ? engraving : undefined,
-      cutting: service === 'cutting' ? cutting : undefined,
-      design: service === 'design' ? design : undefined,
-      files,
-      pricing,
-      payment: {
-        ...payment,
-        status: 'pending'
+      customer: {
+        name: customer.name || 'N/A',
+        email: customer.email,
+        phone: customer.phone || null,
+        company: customer.company || null
       },
-      notes,
+      service,
+      engraving: service === 'engraving' || service === 'combined' ? engraving : undefined,
+      cutting: service === 'cutting' || service === 'combined' ? cutting : undefined,
+      design: service === 'design' || service === 'combined' ? design : undefined,
+      files: files || [],
+      pricing: {
+        basePrice: pricing.basePrice || 0,
+        additionalCosts: pricing.additionalCosts || 0,
+        discount: pricing.discount || 0,
+        totalPrice: pricing.totalPrice || 0,
+        currency: pricing.currency || 'UAH'
+      },
+      payment: {
+        method: payment?.method || 'pending',
+        status: 'pending',
+        transactionId: payment?.transactionId || null
+      },
+      notes: notes || '',
       status: 'new'
     });
 
     // Зберегти в БД
-    await order.save();
+    const savedOrder = await order.save();
+    console.log('✅ Замовлення створено:', savedOrder.orderNumber);
 
-    // Відправити сповіщення у Telegram
+    // Відправити сповіщення у Telegram (асинхронно)
     try {
       await sendOrderNotification(req.body);
+      console.log('✅ Telegram сповіщення відправлено');
     } catch (telegramError) {
-      console.error('Помилка відправки у Telegram:', telegramError.message);
+      console.error('❌ Помилка відправки у Telegram:', telegramError.message);
+      // Не блокуємо відповідь через помилку Telegram
     }
 
-    // Відправити email клієнту (опціонально)
+    // Відправити email клієнту (асинхронно)
     try {
-      await transporter.sendMail({
-        from: process.env.SMTP_FROM,
-        to: customer.email,
-        subject: `Замовлення ${order.orderNumber} прийнято!`,
-        html: `
-          <h2>Дякуємо за замовлення!</h2>
-          <p>Ваше замовлення <strong>${order.orderNumber}</strong> прийнято.</p>
-          <p><strong>Статус:</strong> ${order.status}</p>
-          <p><strong>Сума:</strong> ${order.pricing.totalPrice} ${order.pricing.currency}</p>
-          <p>Ми скоро зв'яжемося з вами для уточнення деталей.</p>
-          <p>З повагою,<br/>Pro Jet Team</p>
-        `
-      });
+      await sendOrderEmail(savedOrder, customer.email);
     } catch (emailError) {
-      console.error('⚠️  Помилка відправки email:', emailError.message);
+      console.error('❌ Помилка відправки email:', emailError.message);
+      // Не блокуємо відповідь через помилку email
     }
 
-    // Відповідь
+    // Відповідь з успіхом
     res.status(201).json({
       success: true,
       message: 'Замовлення успішно створено!',
-      order: order.toJSON()
+      order: savedOrder.toJSON()
     });
   } catch (error) {
-    console.error('Помилка створення замовлення:', error);
+    console.error('❌ Помилка створення замовлення:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
@@ -121,6 +212,14 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Валідація ID
+    if (!id || id.length < 3) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Невірний ID замовлення'
+      });
+    }
 
     // Пошук по ID або orderNumber
     const order = await Order.findOne({
@@ -146,7 +245,7 @@ router.get('/:id', async (req, res) => {
       order: order.toJSON()
     });
   } catch (error) {
-    console.error('Помилка отримання замовлення:', error);
+    console.error('❌ Помилка отримання замовлення:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
@@ -162,6 +261,14 @@ router.get('/by-email/:email', async (req, res) => {
   try {
     const { email } = req.params;
 
+    // Валідація email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Невірний формат email'
+      });
+    }
+
     const orders = await Order.find({
       'customer.email': email,
       isArchived: false
@@ -173,7 +280,7 @@ router.get('/by-email/:email', async (req, res) => {
       orders: orders.map(o => o.toJSON())
     });
   } catch (error) {
-    console.error('Помилка отримання замовлень:', error);
+    console.error('❌ Помилка отримання замовлень:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
@@ -199,7 +306,12 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // Дозволити тільки оновлення notes
+    // Дозволити тільки оновлення notes та статусу (обмежено)
+    const allowedStatuses = ['new', 'in_progress', 'completed', 'cancelled'];
+    if (status !== undefined && allowedStatuses.includes(status)) {
+      order.status = status;
+    }
+
     if (notes !== undefined) {
       order.notes = notes;
     }
@@ -212,7 +324,7 @@ router.put('/:id', async (req, res) => {
       order: order.toJSON()
     });
   } catch (error) {
-    console.error('Помилка оновлення замовлення:', error);
+    console.error('❌ Помилка оновлення замовлення:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
@@ -233,7 +345,7 @@ router.get('/stats/all', async (req, res) => {
       stats: stats
     });
   } catch (error) {
-    console.error('Помилка отримання статистики:', error);
+    console.error('❌ Помилка отримання статистики:', error);
     res.status(500).json({
       error: 'Server Error',
       message: error.message
