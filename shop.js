@@ -351,6 +351,92 @@ async function checkout() {
 }
 
 /**
+ * Замовити через Telegram бот
+ */
+async function checkoutViaTelegram() {
+  if (cart.length === 0) {
+    showNotification('Кошик порожній!', 'error');
+    return;
+  }
+
+  try {
+    let botUsername = null;
+    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    const apiUrl = isProduction ? `${window.location.origin}/api` : 'http://localhost:3000/api';
+
+    // Спроба 1: отримати з /api/config
+    try {
+      const configResponse = await fetch(`${apiUrl}/config`);
+      if (configResponse.ok) {
+        const config = await configResponse.json();
+        if (config.telegramBotUsername && config.telegramBotUsername !== 'your_bot_username') {
+          botUsername = config.telegramBotUsername;
+          console.log('✅ Username бота отримано з /api/config:', botUsername);
+        }
+      }
+    } catch (configError) {
+      console.warn('Не вдалося отримати конфігурацію з /api/config:', configError);
+    }
+
+    // Спроба 2: якщо не вийшло, пробуємо /api/telegram/bot-info
+    if (!botUsername) {
+      try {
+        const botInfoResponse = await fetch(`${apiUrl}/telegram/bot-info`);
+        if (botInfoResponse.ok) {
+          const botInfo = await botInfoResponse.json();
+          if (botInfo.success && botInfo.botUsername) {
+            botUsername = botInfo.botUsername;
+            console.log('✅ Username бота отримано з /api/telegram/bot-info:', botUsername);
+          }
+        }
+      } catch (botInfoError) {
+        console.warn('Не вдалося отримати username бота з /api/telegram/bot-info:', botInfoError);
+      }
+    }
+
+    // Спроба 3: перевіряємо глобальну змінну
+    if (!botUsername && window.TELEGRAM_BOT_USERNAME && window.TELEGRAM_BOT_USERNAME !== 'your_bot_username') {
+      botUsername = window.TELEGRAM_BOT_USERNAME;
+      console.log('✅ Username бота взято з window.TELEGRAM_BOT_USERNAME:', botUsername);
+    }
+
+    // Якщо username все ще не знайдено
+    if (!botUsername) {
+      showNotification('❌ Помилка: Telegram бот не налаштовано. Скористайтеся звичайною формою замовлення.', 'error');
+      console.error('TELEGRAM_BOT_USERNAME не налаштовано ні в API, ні в window.TELEGRAM_BOT_USERNAME');
+      return;
+    }
+
+    // Формування даних замовлення
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Кодуємо дані замовлення в base64 для передачі через start parameter
+    const orderData = btoa(JSON.stringify({
+      type: 'shop',
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      total: totalPrice
+    }));
+
+    // Telegram Deep Link
+    const telegramUrl = `https://t.me/${botUsername}?start=order_${orderData}`;
+
+    // Відкрити Telegram
+    window.open(telegramUrl, '_blank');
+
+    showNotification('Перенаправлення в Telegram бот...', 'success');
+
+  } catch (error) {
+    console.error('Помилка при створенні замовлення через Telegram:', error);
+    showNotification('❌ Помилка сервера: ' + error.message, 'error');
+  }
+}
+
+/**
  * Зберегти кошик у localStorage
  */
 function saveCart() {

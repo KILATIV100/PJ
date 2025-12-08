@@ -53,11 +53,20 @@ function initBot(webhook = false, webhookUrl = null) {
  * Налаштування обробників
  */
 function setupHandlers() {
-  // Команда /start
-  bot.onText(/\/start/, async (msg) => {
+  // Команда /start (з можливим параметром для замовлення з магазину)
+  bot.onText(/\/start(.*)/, async (msg, match) => {
     const chatId = msg.chat.id;
+    const userId = msg.from.id;
     const firstName = msg.from.first_name;
-    await handleStart(chatId, firstName);
+    const param = match[1].trim();
+
+    // Перевірка чи є параметр замовлення
+    if (param.startsWith('order_')) {
+      const orderDataEncoded = param.replace('order_', '');
+      await handleShopOrder(chatId, userId, firstName, orderDataEncoded);
+    } else {
+      await handleStart(chatId, firstName);
+    }
   });
 
   // Команда /help
@@ -220,6 +229,68 @@ async function handleStart(chatId, firstName) {
   await sendMessage(chatId, text, {
     reply_markup: getMainMenuKeyboard()
   });
+}
+
+/**
+ * Обробка замовлення з магазину (через deep link)
+ */
+async function handleShopOrder(chatId, userId, firstName, orderDataEncoded) {
+  try {
+    // Декодування даних замовлення
+    const orderDataJson = Buffer.from(orderDataEncoded, 'base64').toString('utf-8');
+    const orderData = JSON.parse(orderDataJson);
+
+    if (!orderData || !orderData.items || orderData.items.length === 0) {
+      await sendMessage(chatId, '❌ Помилка: неможливо прочитати дані замовлення. Спробуйте ще раз.');
+      return;
+    }
+
+    // Формування опису замовлення
+    const itemsList = orderData.items.map(item =>
+      `• ${item.name} x${item.quantity} - ${item.price * item.quantity} ₴`
+    ).join('\n');
+
+    const confirmText = `🛍 <b>Замовлення з магазину</b>
+
+<b>Товари:</b>
+${itemsList}
+
+<b>💰 Загальна сума:</b> ${orderData.total} ₴
+
+📝 Тепер надішліть ваші контактні дані для оформлення замовлення:
+
+<b>Ім'я:</b> Ваше ім'я
+<b>Телефон:</b> +380XXXXXXXXX
+<b>Email:</b> your@email.com
+<b>Місто:</b> Назва міста
+
+<i>Або скористайтеся кнопкою нижче</i>`;
+
+    const keyboard = {
+      keyboard: [[{ text: '📱 Відправити контакт', request_contact: true }]],
+      resize_keyboard: true,
+      one_time_keyboard: true
+    };
+
+    // Зберігаємо дані замовлення у стан користувача
+    userStates.set(userId, {
+      step: 'get_contact_info',
+      data: {
+        service: 'shop',
+        shopOrder: orderData
+      }
+    });
+
+    await sendMessage(chatId, confirmText, { reply_markup: keyboard });
+
+  } catch (error) {
+    console.error('Помилка обробки замовлення з магазину:', error);
+    await sendMessage(chatId, `❌ Помилка обробки замовлення. Будь ласка, спробуйте оформити замовлення через сайт або зв'яжіться з нами напряму.
+
+👋 Вітаю, ${firstName}! Ви можете створити нове замовлення через меню:`, {
+      reply_markup: getMainMenuKeyboard()
+    });
+  }
 }
 
 /**
@@ -487,9 +558,10 @@ async function handleConfirmOrder(chatId, messageId, userId) {
 
   try {
     const contact = state.data.contact;
+    const shopOrder = state.data.shopOrder;
 
-    // Створити замовлення через Order model
-    const order = await Order.create({
+    // Підготовка даних замовлення
+    let orderData = {
       customer: {
         name: contact.name,
         email: contact.email || '',
@@ -498,18 +570,29 @@ async function handleConfirmOrder(chatId, messageId, userId) {
       },
       service: state.data.service,
       pricing: {
-        totalPrice: 0, // Ціну розрахує менеджер
+        totalPrice: shopOrder ? shopOrder.total : 0,
         currency: 'UAH'
       },
       payment: {
         method: 'pending'
       },
-      notes: state.data.description
-    });
+      notes: state.data.description || ''
+    };
+
+    // Якщо є замовлення з магазину, додаємо деталі товарів
+    if (shopOrder && shopOrder.items) {
+      orderData.items = shopOrder.items;
+      orderData.notes = `Замовлення з магазину:\n${shopOrder.items.map(item =>
+        `${item.name} x${item.quantity} - ${item.price * item.quantity} ₴`
+      ).join('\n')}\n\n${orderData.notes}`;
+    }
+
+    // Створити замовлення через Order model
+    const order = await Order.create(orderData);
 
     // Сповіщення адміністратору
     if (ADMIN_CHAT_ID) {
-      const adminText = `📦 <b>НОВЕ ЗАМОВЛЕННЯ #${order.orderNumber}</b>
+      let adminText = `📦 <b>НОВЕ ЗАМОВЛЕННЯ #${order.orderNumber}</b>
 
 <b>👤 Клієнт:</b>
 Ім'я: ${contact.name}
@@ -517,12 +600,22 @@ async function handleConfirmOrder(chatId, messageId, userId) {
 Email: ${contact.email || 'не вказано'}
 Місто: ${contact.city || 'не вказано'}
 
-<b>🛠 Послуга:</b> ${state.data.service}
+<b>🛠 Послуга:</b> ${state.data.service}`;
 
-<b>📝 Опис:</b>
-${state.data.description}
+      // Додаємо список товарів для замовлень з магазину
+      if (shopOrder && shopOrder.items) {
+        adminText += `\n\n<b>🛍 Товари:</b>\n`;
+        shopOrder.items.forEach(item => {
+          adminText += `• ${item.name} x${item.quantity} - ${item.price * item.quantity} ₴\n`;
+        });
+        adminText += `\n<b>💰 Всього:</b> ${shopOrder.total} ₴`;
+      }
 
-<b>🕐 Час:</b> ${new Date().toLocaleString('uk-UA')}`;
+      if (state.data.description) {
+        adminText += `\n\n<b>📝 Опис:</b>\n${state.data.description}`;
+      }
+
+      adminText += `\n\n<b>🕐 Час:</b> ${new Date().toLocaleString('uk-UA')}`;
 
       await sendMessage(ADMIN_CHAT_ID, adminText);
     }
@@ -531,7 +624,7 @@ ${state.data.description}
 
 📋 Номер замовлення: <b>#${order.orderNumber}</b>
 
-Ми зв'яжемося з вами найближчим часом для уточнення деталей та розрахунку вартості.
+Ми зв'яжемося з вами найближчим часом для уточнення деталей${shopOrder ? '' : ' та розрахунку вартості'}.
 
 Дякуємо за замовлення! 🎉`;
 
@@ -686,8 +779,14 @@ async function processWebhookUpdate(update) {
       const text = update.message.text;
       const firstName = update.message.from.first_name;
 
-      if (text === '/start') {
-        return await handleStart(chatId, firstName);
+      if (text && text.startsWith('/start')) {
+        const param = text.replace('/start', '').trim();
+        if (param.startsWith('order_')) {
+          const orderDataEncoded = param.replace('order_', '');
+          return await handleShopOrder(chatId, userId, firstName, orderDataEncoded);
+        } else {
+          return await handleStart(chatId, firstName);
+        }
       }
       if (text === '/help') {
         return await handleHelp(chatId);

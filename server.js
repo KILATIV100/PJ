@@ -62,6 +62,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Config endpoint - публічні налаштування для фронтенду
+app.get('/api/config', (req, res) => {
+  res.json({
+    telegramBotUsername: process.env.TELEGRAM_BOT_USERNAME || null,
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // API Routes
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);

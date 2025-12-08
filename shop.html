@@ -497,6 +497,9 @@
                     <span>Всього:</span>
                     <span id="cartTotal">0 ₴</span>
                 </div>
+                <button class="checkout-btn" onclick="checkoutViaTelegram()" style="background: #0088cc; margin-bottom: 10px;">
+                    📱 Замовити через Telegram
+                </button>
                 <button class="checkout-btn" onclick="checkout()">Оформити замовлення</button>
             </div>
         </div>
@@ -509,6 +512,11 @@
         </div>
     </footer>
 
+    <script>
+        // Налаштування Telegram бота (fallback якщо API не працює)
+        // Замініть 'your_bot_username' на реальний username вашого бота (без @)
+        window.TELEGRAM_BOT_USERNAME = 'your_bot_username';
+    </script>
     <script src="shop.js"></script>
 </body>
 </html>
