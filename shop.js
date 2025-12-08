@@ -351,6 +351,59 @@ async function checkout() {
 }
 
 /**
+ * Замовити через Telegram бот
+ */
+async function checkoutViaTelegram() {
+  if (cart.length === 0) {
+    showNotification('Кошик порожній!', 'error');
+    return;
+  }
+
+  try {
+    // Отримати username бота з API
+    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    const apiUrl = isProduction ? `${window.location.origin}/api` : 'http://localhost:3000/api';
+
+    const response = await fetch(`${apiUrl}/telegram/bot-info`);
+    const botInfo = await response.json();
+
+    if (!botInfo.success || !botInfo.botUsername) {
+      showNotification('Помилка: username бота не налаштовано. Скористайтеся звичайною формою замовлення.', 'error');
+      return;
+    }
+
+    const botUsername = botInfo.botUsername;
+
+    // Формування даних замовлення
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Кодуємо дані замовлення в base64 для передачі через start parameter
+    const orderData = btoa(JSON.stringify({
+      type: 'shop',
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      total: totalPrice
+    }));
+
+    // Telegram Deep Link
+    const telegramUrl = `https://t.me/${botUsername}?start=order_${orderData}`;
+
+    // Відкрити Telegram
+    window.open(telegramUrl, '_blank');
+
+    showNotification('Перенаправлення в Telegram бот...', 'success');
+
+  } catch (error) {
+    console.error('Помилка отримання інформації про бота:', error);
+    showNotification('Помилка підключення до Telegram бота. Спробуйте пізніше або скористайтеся звичайною формою.', 'error');
+  }
+}
+
+/**
  * Зберегти кошик у localStorage
  */
 function saveCart() {

@@ -148,4 +148,24 @@ router.delete('/webhook', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/telegram/bot-info
+ * Отримати публічну інформацію про бота (username)
+ */
+router.get('/bot-info', (req, res) => {
+  const botUsername = process.env.TELEGRAM_BOT_USERNAME;
+
+  if (!botUsername || botUsername === 'your_bot_username') {
+    return res.status(404).json({
+      error: 'Bot username not configured',
+      message: 'Please set TELEGRAM_BOT_USERNAME in environment variables'
+    });
+  }
+
+  res.json({
+    success: true,
+    botUsername: botUsername
+  });
+});
+
 module.exports = router;
