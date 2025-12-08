@@ -15,12 +15,23 @@ function initDatabase() {
     return pool;
   }
 
-  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  // Перевірка різних варіантів змінних (Railway може встановлювати різні назви)
+  const databaseUrl = process.env.DATABASE_URL ||
+                      process.env.POSTGRES_URL ||
+                      process.env.DATABASE_PRIVATE_URL ||
+                      process.env.PGURL;
 
   if (!databaseUrl) {
-    console.error('❌ DATABASE_URL не встановлений');
-    throw new Error('DATABASE_URL не встановлений у змінних середовища');
+    console.error('❌ Змінна бази даних не встановлена');
+    console.error('Перевірте наявність однієї з змінних:');
+    console.error('  - DATABASE_URL');
+    console.error('  - POSTGRES_URL');
+    console.error('  - DATABASE_PRIVATE_URL');
+    console.error('Доступні змінні:', Object.keys(process.env).filter(k => k.includes('DATA') || k.includes('POSTGRES') || k.includes('PG')));
+    throw new Error('DATABASE_URL або POSTGRES_URL не встановлені у змінних середовища');
   }
+
+  console.log('✅ Використовується база даних:', databaseUrl.split('@')[1]?.split('/')[0] || 'hidden');
 
   try {
     pool = new Pool({
