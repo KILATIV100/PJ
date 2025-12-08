@@ -1,174 +1,218 @@
 /**
- * User Model
+ * User Model для PostgreSQL
  * Модель для користувачів системи
  */
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const db = require('../services/database');
 
-const UserSchema = new mongoose.Schema({
-  // Базова інформація
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6
-  },
+class User {
+  /**
+   * Створити нового користувача
+   */
+  static async create(userData) {
+    const {
+      email,
+      name,
+      phone,
+      role = 'customer',
+      passwordHash = null,
+      telegramChatId = null
+    } = userData;
 
-  // Контактна інформація
-  phone: String,
-  avatar: String,
+    const query = `
+      INSERT INTO users (
+        email, name, phone, role, password_hash, telegram_chat_id
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `;
 
-  // Адреса
-  address: {
-    street: String,
-    city: String,
-    region: String,
-    postalCode: String,
-    country: {
-      type: String,
-      default: 'Ukraine'
+    const values = [
+      email.toLowerCase(),
+      name,
+      phone || null,
+      role,
+      passwordHash,
+      telegramChatId
+    ];
+
+    const result = await db.query(query, values);
+    return this.formatUser(result.rows[0]);
+  }
+
+  /**
+   * Знайти користувача по ID
+   */
+  static async findById(id) {
+    const query = 'SELECT * FROM users WHERE id = $1';
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return null;
     }
-  },
 
-  // Доставка Нова Пошта
-  novaPoshtaInfo: {
-    recipient: String, // Ім'я отримувача
-    phone: String,     // Телефон отримувача
-    department: String, // Номер відділення
-    departmentCity: String // Місто відділення
-  },
-
-  // Роль користувача
-  role: {
-    type: String,
-    enum: ['customer', 'seller', 'admin'],
-    default: 'customer'
-  },
-
-  // Статус
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
-  verificationToken: String,
-  verificationTokenExpires: Date,
-
-  // Пароль
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-
-  // Вподобання та кошик
-  favoriteProducts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  }],
-  savedAddresses: [{
-    label: String, // Home, Work, etc.
-    street: String,
-    city: String,
-    region: String,
-    postalCode: String,
-    isDefault: Boolean
-  }],
-
-  // Статистика
-  totalOrders: {
-    type: Number,
-    default: 0
-  },
-  totalSpent: {
-    type: Number,
-    default: 0
-  },
-
-  // Для продавців
-  shop: {
-    name: String,
-    description: String,
-    logo: String,
-    isVerified: Boolean,
-    rating: Number,
-    followers: Number
-  },
-
-  // Дати
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  },
-  lastLogin: Date
-}, {
-  timestamps: true
-});
-
-// Індекси
-UserSchema.index({ email: 1 });
-UserSchema.index({ createdAt: -1 });
-
-// Middleware - хешування пароля перед збереженням
-UserSchema.pre('save', async function (next) {
-  // Якщо пароль не був змінений, пропустити
-  if (!this.isModified('password')) {
-    return next();
+    return this.formatUser(result.rows[0]);
   }
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    this.updatedAt = new Date();
-    next();
-  } catch (error) {
-    next(error);
+  /**
+   * Знайти користувача по email
+   */
+  static async findByEmail(email) {
+    const query = 'SELECT * FROM users WHERE email = $1';
+    const result = await db.query(query, [email.toLowerCase()]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.formatUser(result.rows[0]);
   }
-});
 
-// Метод для перевірки пароля
-UserSchema.methods.comparePassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+  /**
+   * Знайти користувача по Telegram Chat ID
+   */
+  static async findByTelegramChatId(chatId) {
+    const query = 'SELECT * FROM users WHERE telegram_chat_id = $1';
+    const result = await db.query(query, [chatId.toString()]);
 
-// Метод для отримання публічної інформації користувача
-UserSchema.methods.getPublicProfile = function () {
-  const user = this.toObject();
-  delete user.password;
-  delete user.passwordResetToken;
-  delete user.passwordResetExpires;
-  delete user.verificationToken;
-  delete user.__v;
-  return user;
-};
+    if (result.rows.length === 0) {
+      return null;
+    }
 
-// Статичний метод для пошуку по email
-UserSchema.statics.findByEmail = async function (email) {
-  return await this.findOne({ email: email.toLowerCase() });
-};
+    return this.formatUser(result.rows[0]);
+  }
 
-// Статичний метод для отримання профілю
-UserSchema.statics.getProfile = async function (userId) {
-  return await this.findById(userId).select('-password -verificationToken -passwordResetToken');
-};
+  /**
+   * Оновити користувача
+   */
+  static async update(id, updates) {
+    const allowedFields = [
+      'name', 'phone', 'role', 'password_hash',
+      'telegram_chat_id', 'is_active', 'email_verified', 'last_login'
+    ];
 
-module.exports = mongoose.model('User', UserSchema);
+    const updateFields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        updateFields.push(`${key} = $${paramIndex}`);
+        values.push(updates[key]);
+        paramIndex++;
+      }
+    });
+
+    if (updateFields.length === 0) {
+      throw new Error('Немає полів для оновлення');
+    }
+
+    values.push(id);
+    const query = `
+      UPDATE users
+      SET ${updateFields.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING *
+    `;
+
+    const result = await db.query(query, values);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.formatUser(result.rows[0]);
+  }
+
+  /**
+   * Видалити користувача (soft delete)
+   */
+  static async delete(id) {
+    return this.update(id, { is_active: false });
+  }
+
+  /**
+   * Оновити час останнього входу
+   */
+  static async updateLastLogin(id) {
+    const query = `
+      UPDATE users
+      SET last_login = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *
+    `;
+
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.formatUser(result.rows[0]);
+  }
+
+  /**
+   * Отримати всіх користувачів з фільтрацією
+   */
+  static async findAll(filters = {}) {
+    const { role, isActive = true, page = 1, limit = 50 } = filters;
+
+    let query = 'SELECT * FROM users WHERE 1=1';
+    const values = [];
+    let paramIndex = 1;
+
+    if (isActive !== undefined) {
+      query += ` AND is_active = $${paramIndex}`;
+      values.push(isActive);
+      paramIndex++;
+    }
+
+    if (role) {
+      query += ` AND role = $${paramIndex}`;
+      values.push(role);
+      paramIndex++;
+    }
+
+    query += ' ORDER BY created_at DESC';
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    values.push(limit, (page - 1) * limit);
+
+    const result = await db.query(query, values);
+    return result.rows.map(row => this.formatUser(row));
+  }
+
+  /**
+   * Форматування користувача для відповіді
+   */
+  static formatUser(row) {
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      phone: row.phone,
+      role: row.role,
+      telegramChatId: row.telegram_chat_id,
+      isActive: row.is_active,
+      emailVerified: row.email_verified,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      lastLogin: row.last_login
+    };
+  }
+
+  /**
+   * Отримати публічний профіль (без чутливих даних)
+   */
+  static formatPublicProfile(row) {
+    const user = this.formatUser(row);
+    if (!user) return null;
+
+    // Видалити чутливі дані
+    delete user.telegramChatId;
+
+    return user;
+  }
+}
+
+module.exports = User;
