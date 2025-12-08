@@ -2,15 +2,17 @@
  * Pro Jet - Backend Server
  * Лазерне гравіювання та порізка - платформа для замовлень
  *
- * Основний файл сервера з Express та MongoDB
+ * PostgreSQL + Express + Telegram Bot
  */
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
+
+// Import database service
+const db = require('./services/database');
 
 // Import routes
 const orderRoutes = require('./routes/orders');
@@ -19,14 +21,13 @@ const productRoutes = require('./routes/products');
 const novaPoshtaRoutes = require('./routes/novaposhta');
 const telegramRoutes = require('./routes/telegram');
 
-// Import services
-const { initializeTelegramBot } = require('./services/telegram');
+// Import Telegram bot
 const { initBot } = require('./services/telegram-bot');
 
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '0.0.0.0';
 
 // ============================================
 // MIDDLEWARE
@@ -48,26 +49,6 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, '/')));
 
 // ============================================
-// DATABASE CONNECTION
-// ============================================
-
-const connectDatabase = async () => {
-  try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/pro-jet';
-
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-
-    console.log('✅ MongoDB підключена успішно!');
-  } catch (error) {
-    console.error('❌ Помилка підключення MongoDB:', error.message);
-    process.exit(1);
-  }
-};
-
-// ============================================
 // ROUTES
 // ============================================
 
@@ -76,7 +57,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    message: 'Pro Jet Backend API is running'
+    message: 'Pro Jet Backend API is running',
+    database: db.getPool() ? 'connected' : 'disconnected'
   });
 });
 
@@ -140,25 +122,33 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
-    // Підключитися до БД
-    await connectDatabase();
+    console.log('\n🚀 Запуск Pro Jet Backend...\n');
 
-    // Ініціалізувати Telegram бота (старий, для сповіщень)
-    initializeTelegramBot();
+    // 1. Ініціалізувати PostgreSQL
+    console.log('📊 Підключення до PostgreSQL...');
+    db.initDatabase();
+    await db.testConnection();
 
-    // Ініціалізувати інтерактивного Telegram бота
+    // 2. Застосувати схему (якщо потрібно)
+    if (process.env.INIT_DB === 'true') {
+      console.log('📋 Застосування схеми бази даних...');
+      await db.initSchema();
+    }
+
+    // 3. Ініціалізувати Telegram бота
+    console.log('🤖 Ініціалізація Telegram бота...');
     const webhookUrl = process.env.WEBHOOK_URL || process.env.RAILWAY_STATIC_URL;
     const useWebhook = process.env.NODE_ENV === 'production' && webhookUrl;
 
     if (useWebhook) {
-      console.log('🤖 Ініціалізація Telegram бота (webhook mode)...');
+      console.log('   Режим: Webhook');
       initBot(true, webhookUrl);
     } else {
-      console.log('🤖 Ініціалізація Telegram бота (polling mode)...');
+      console.log('   Режим: Polling (для локальної розробки)');
       initBot(false);
     }
 
-    // Запустити сервер
+    // 4. Запустити Express сервер
     app.listen(PORT, HOST, () => {
       console.log(`
 ╔════════════════════════════════════════╗
@@ -167,6 +157,7 @@ const startServer = async () => {
 
   URL: http://${HOST}:${PORT}
   Environment: ${process.env.NODE_ENV || 'development'}
+  Database: PostgreSQL
   Telegram Bot: ${useWebhook ? 'Webhook' : 'Polling'}
 
   📌 API Endpoints:
@@ -177,6 +168,8 @@ const startServer = async () => {
      • GET  /api/telegram/set-webhook - Встановити webhook
      • POST /api/payment/fondy       - Платіж Fondy
      • POST /api/payment/liqpay      - Платіж LiqPay
+
+  ✅ Сервер готовий до роботи!
       `);
     });
   } catch (error) {
@@ -194,7 +187,13 @@ startServer();
 
 process.on('SIGINT', async () => {
   console.log('\n📍 Отримано сигнал SIGINT, завершення роботи...');
-  await mongoose.connection.close();
+  await db.closePool();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n📍 Отримано сигнал SIGTERM, завершення роботи...');
+  await db.closePool();
   process.exit(0);
 });
 
