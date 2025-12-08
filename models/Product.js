@@ -1,254 +1,267 @@
 /**
- * Product Model
- * Модель для товарів магазину сувенірної продукції
+ * Product Model для PostgreSQL
+ * Модель для товарів магазину
  */
 
-const mongoose = require('mongoose');
+const db = require('../services/database');
 
-const ProductSchema = new mongoose.Schema({
-  // Основна інформація
-  name: {
-    type: String,
-    required: true
-  },
-  sku: {
-    type: String,
-    unique: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  category: {
-    type: String,
-    enum: ['cups', 'pens', 'badges', 'keychains', 'other'],
-    required: true
-  },
+class Product {
+  /**
+   * Створити новий товар
+   */
+  static async create(productData) {
+    const {
+      name,
+      description,
+      category,
+      price,
+      stock = 0,
+      images,
+      mainImage,
+      isActive = true,
+      isFeatured = false,
+      isPopular = false
+    } = productData;
 
-  // Ціна та залишки
-  price: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  discountPrice: {
-    type: Number,
-    default: null
-  },
-  stock: {
-    type: Number,
-    default: 100
-  },
-  lowStockThreshold: {
-    type: Number,
-    default: 20
-  },
+    const query = `
+      INSERT INTO products (
+        name, description, category, price, stock,
+        images, main_image, is_active, is_featured, is_popular
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *
+    `;
 
-  // Характеристики
-  specifications: [{
-    key: String,
-    value: String
-  }],
-  dimensions: {
-    length: Number,
-    width: Number,
-    height: Number,
-    unit: {
-      type: String,
-      default: 'mm'
-    }
-  },
-  weight: {
-    value: Number,
-    unit: {
-      type: String,
-      default: 'g'
-    }
-  },
+    const values = [
+      name,
+      description,
+      category,
+      price,
+      stock,
+      images ? JSON.stringify(images) : null,
+      mainImage || null,
+      isActive,
+      isFeatured,
+      isPopular
+    ];
 
-  // Зображення та медіа
-  images: [{
-    url: String,
-    alt: String,
-    isPrimary: Boolean
-  }],
-  emoji: String,
-
-  // Персоналізація
-  isCustomizable: {
-    type: Boolean,
-    default: true
-  },
-  customizationOptions: [{
-    name: String,
-    type: String, // 'engraving', 'print', 'embroidery'
-    additionalPrice: Number
-  }],
-
-  // SEO
-  seoTitle: String,
-  seoDescription: String,
-  seoKeywords: [String],
-
-  // Статус
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  isFeatured: {
-    type: Boolean,
-    default: false
-  },
-  isPopular: {
-    type: Boolean,
-    default: false
-  },
-
-  // Рейтинги та відгуки
-  rating: {
-    average: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 5
-    },
-    count: {
-      type: Number,
-      default: 0
-    }
-  },
-  reviews: [{
-    author: String,
-    email: String,
-    rating: Number,
-    comment: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-
-  // Логістика
-  shippingInfo: {
-    weight: Number,
-    dimensions: String,
-    shippingCost: Number,
-    freeShippingThreshold: Number
-  },
-
-  // Дати
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  },
-
-  // Статистика
-  views: {
-    type: Number,
-    default: 0
-  },
-  purchases: {
-    type: Number,
-    default: 0
+    const result = await db.query(query, values);
+    return this.formatProduct(result.rows[0]);
   }
-}, {
-  timestamps: true
-});
 
-// Індекси
-ProductSchema.index({ name: 'text', description: 'text' });
-ProductSchema.index({ category: 1 });
-ProductSchema.index({ isActive: 1 });
-ProductSchema.index({ price: 1 });
-ProductSchema.index({ createdAt: -1 });
-ProductSchema.index({ sku: 1 });
+  /**
+   * Знайти товар по ID
+   */
+  static async findById(id) {
+    const query = 'SELECT * FROM products WHERE id = $1';
+    const result = await db.query(query, [id]);
 
-// Middleware - оновити дату updatedAt
-ProductSchema.pre('save', function (next) {
-  this.updatedAt = new Date();
-  next();
-});
+    if (result.rows.length === 0) {
+      return null;
+    }
 
-// Метод для перевірки наявності товару
-ProductSchema.methods.isInStock = function () {
-  return this.stock > 0;
-};
-
-// Метод для отримання ціни з урахуванням знижки
-ProductSchema.methods.getPrice = function () {
-  return this.discountPrice || this.price;
-};
-
-// Метод для отримання відсотка знижки
-ProductSchema.methods.getDiscount = function () {
-  if (!this.discountPrice) return 0;
-  return Math.round(((this.price - this.discountPrice) / this.price) * 100);
-};
-
-// Статичний метод для отримання товарів по категорії
-ProductSchema.statics.getByCategory = async function (category) {
-  return await this.find({ category, isActive: true }).sort({ createdAt: -1 });
-};
-
-// Статичний метод для пошуку по названию
-ProductSchema.statics.search = async function (query) {
-  return await this.find({
-    $text: { $search: query },
-    isActive: true
-  });
-};
-
-// Статичний метод для отримання популярних товарів
-ProductSchema.statics.getPopular = async function (limit = 8) {
-  return await this.find({ isPopular: true, isActive: true })
-    .sort({ purchases: -1 })
-    .limit(limit);
-};
-
-// Статичний метод для отримання новинок
-ProductSchema.statics.getNew = async function (limit = 8, days = 30) {
-  const date = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-  return await this.find({
-    createdAt: { $gte: date },
-    isActive: true
-  }).sort({ createdAt: -1 }).limit(limit);
-};
-
-// Метод для додавання відгуку
-ProductSchema.methods.addReview = function (review) {
-  this.reviews.push(review);
-  this.updateRating();
-  return this.save();
-};
-
-// Метод для оновлення рейтингу
-ProductSchema.methods.updateRating = function () {
-  if (this.reviews.length === 0) {
-    this.rating.average = 0;
-    this.rating.count = 0;
-  } else {
-    const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
-    this.rating.average = sum / this.reviews.length;
-    this.rating.count = this.reviews.length;
+    return this.formatProduct(result.rows[0]);
   }
-};
 
-// Метод для зменшення запасів
-ProductSchema.methods.decreaseStock = function (quantity = 1) {
-  this.stock -= quantity;
-  this.purchases += 1;
-  return this.save();
-};
+  /**
+   * Знайти всі товари з фільтрацією
+   */
+  static async findAll(filters = {}) {
+    const { category, isActive = true, page = 1, limit = 50 } = filters;
 
-// Метод для форматування для відповіді
-ProductSchema.methods.toJSON = function () {
-  const product = this.toObject();
-  delete product.__v;
-  return product;
-};
+    let query = 'SELECT * FROM products WHERE 1=1';
+    const values = [];
+    let paramIndex = 1;
 
-module.exports = mongoose.model('Product', ProductSchema);
+    if (isActive !== undefined) {
+      query += ` AND is_active = $${paramIndex}`;
+      values.push(isActive);
+      paramIndex++;
+    }
+
+    if (category) {
+      query += ` AND category = $${paramIndex}`;
+      values.push(category);
+      paramIndex++;
+    }
+
+    query += ' ORDER BY created_at DESC';
+    query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    values.push(limit, (page - 1) * limit);
+
+    const result = await db.query(query, values);
+    return result.rows.map(row => this.formatProduct(row));
+  }
+
+  /**
+   * Знайти товари по категорії
+   */
+  static async getByCategory(category) {
+    const query = `
+      SELECT * FROM products
+      WHERE category = $1 AND is_active = TRUE
+      ORDER BY created_at DESC
+    `;
+
+    const result = await db.query(query, [category]);
+    return result.rows.map(row => this.formatProduct(row));
+  }
+
+  /**
+   * Отримати featured товари
+   */
+  static async getFeatured(limit = 8) {
+    const query = `
+      SELECT * FROM products
+      WHERE is_featured = TRUE AND is_active = TRUE
+      ORDER BY created_at DESC
+      LIMIT $1
+    `;
+
+    const result = await db.query(query, [limit]);
+    return result.rows.map(row => this.formatProduct(row));
+  }
+
+  /**
+   * Отримати популярні товари
+   */
+  static async getPopular(limit = 8) {
+    const query = `
+      SELECT * FROM products
+      WHERE is_popular = TRUE AND is_active = TRUE
+      ORDER BY purchases DESC
+      LIMIT $1
+    `;
+
+    const result = await db.query(query, [limit]);
+    return result.rows.map(row => this.formatProduct(row));
+  }
+
+  /**
+   * Оновити товар
+   */
+  static async update(id, updates) {
+    const allowedFields = [
+      'name', 'description', 'category', 'price', 'stock',
+      'images', 'main_image', 'is_active', 'is_featured', 'is_popular'
+    ];
+
+    const updateFields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        updateFields.push(`${key} = $${paramIndex}`);
+        values.push(updates[key]);
+        paramIndex++;
+      }
+    });
+
+    if (updateFields.length === 0) {
+      throw new Error('Немає полів для оновлення');
+    }
+
+    values.push(id);
+    const query = `
+      UPDATE products
+      SET ${updateFields.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING *
+    `;
+
+    const result = await db.query(query, values);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.formatProduct(result.rows[0]);
+  }
+
+  /**
+   * Інкрементувати перегляди
+   */
+  static async incrementViews(id) {
+    const query = `
+      UPDATE products
+      SET views = views + 1
+      WHERE id = $1
+      RETURNING *
+    `;
+
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return this.formatProduct(result.rows[0]);
+  }
+
+  /**
+   * Додати відгук
+   */
+  static async addReview(id, review) {
+    const product = await this.findById(id);
+
+    if (!product) {
+      throw new Error('Товар не знайдено');
+    }
+
+    const reviews = product.reviews || [];
+    reviews.push({
+      ...review,
+      createdAt: new Date()
+    });
+
+    // Оновити рейтинг
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    const averageRating = sum / reviews.length;
+
+    const query = `
+      UPDATE products
+      SET reviews = $1, average_rating = $2
+      WHERE id = $3
+      RETURNING *
+    `;
+
+    const result = await db.query(query, [JSON.stringify(reviews), averageRating, id]);
+    return this.formatProduct(result.rows[0]);
+  }
+
+  /**
+   * Форматування продукту для відповіді
+   */
+  static formatProduct(row) {
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      category: row.category,
+      price: parseFloat(row.price),
+      stock: row.stock,
+      images: row.images,
+      mainImage: row.main_image,
+      isActive: row.is_active,
+      isFeatured: row.is_featured,
+      isPopular: row.is_popular,
+      views: row.views,
+      purchases: row.purchases,
+      reviews: row.reviews,
+      averageRating: row.average_rating ? parseFloat(row.average_rating) : 0,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    };
+  }
+
+  /**
+   * Видалити товар (soft delete)
+   */
+  static async delete(id) {
+    return this.update(id, { is_active: false });
+  }
+}
+
+module.exports = Product;
