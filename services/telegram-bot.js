@@ -1,60 +1,17 @@
 /**
- * Telegram Bot для Railway
- * Використовує PostgreSQL та Express webhook
+ * Telegram Bot - Об'єднаний сервіс
+ * Інтерактивний бот + сповіщення про замовлення
  */
 
 const TelegramBot = require('node-telegram-bot-api');
-const { Pool } = require('pg');
+const db = require('./database');
+const Order = require('../models/Order');
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-// PostgreSQL connection pool
-let pool = null;
-
 // Тимчасове сховище для conversation state
 const userStates = new Map();
-
-/**
- * Ініціалізація PostgreSQL pool
- */
-function initDatabase() {
-  const databaseUrl = process.env.DATABASE_URL;
-
-  if (!databaseUrl) {
-    console.warn('⚠️  DATABASE_URL не встановлений');
-    return null;
-  }
-
-  pool = new Pool({
-    connectionString: databaseUrl,
-    ssl: process.env.NODE_ENV === 'production' ? {
-      rejectUnauthorized: false
-    } : false
-  });
-
-  console.log('✅ PostgreSQL pool ініціалізовано');
-  return pool;
-}
-
-/**
- * Виконання SQL запиту
- */
-async function query(text, params) {
-  if (!pool) {
-    throw new Error('Database pool не ініціалізовано');
-  }
-  return pool.query(text, params);
-}
-
-/**
- * Генерація номера замовлення
- */
-async function generateOrderNumber() {
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `ORD-${timestamp}-${random}`;
-}
 
 /**
  * Створення бота
@@ -529,25 +486,30 @@ async function handleConfirmOrder(chatId, messageId, userId) {
   }
 
   try {
-    const orderNumber = await generateOrderNumber();
     const contact = state.data.contact;
 
-    const result = await query(
-      `INSERT INTO orders (
-        order_number, customer_name, customer_email, customer_phone,
-        customer_city, service, notes, total_price, currency, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING *`,
-      [
-        orderNumber, contact.name, contact.email || '', contact.phone,
-        contact.city || '', state.data.service, state.data.description,
-        0, 'UAH', 'new'
-      ]
-    );
+    // Створити замовлення через Order model
+    const order = await Order.create({
+      customer: {
+        name: contact.name,
+        email: contact.email || '',
+        phone: contact.phone,
+        city: contact.city || ''
+      },
+      service: state.data.service,
+      pricing: {
+        totalPrice: 0, // Ціну розрахує менеджер
+        currency: 'UAH'
+      },
+      payment: {
+        method: 'pending'
+      },
+      notes: state.data.description
+    });
 
     // Сповіщення адміністратору
     if (ADMIN_CHAT_ID) {
-      const adminText = `📦 <b>НОВЕ ЗАМОВЛЕННЯ #${orderNumber}</b>
+      const adminText = `📦 <b>НОВЕ ЗАМОВЛЕННЯ #${order.orderNumber}</b>
 
 <b>👤 Клієнт:</b>
 Ім'я: ${contact.name}
@@ -567,7 +529,7 @@ ${state.data.description}
 
     const successText = `✅ <b>Замовлення прийнято!</b>
 
-📋 Номер замовлення: <b>#${orderNumber}</b>
+📋 Номер замовлення: <b>#${order.orderNumber}</b>
 
 Ми зв'яжемося з вами найближчим часом для уточнення деталей та розрахунку вартості.
 
@@ -600,14 +562,10 @@ async function handleCancelOrder(chatId, messageId, userId) {
  */
 async function handleMyOrders(chatId, messageId, userId) {
   try {
-    const result = await query(
-      `SELECT * FROM orders
-       WHERE customer_phone LIKE $1
-       ORDER BY created_at DESC LIMIT 10`,
-      [`%${userId}%`]
-    );
+    // Використовуємо Order model для пошуку
+    const orders = await Order.findByPhone(userId.toString());
 
-    if (result.rows.length === 0) {
+    if (orders.length === 0) {
       await editMessage(chatId, messageId, `📦 У вас поки немає замовлень.
 
 Створіть нове замовлення, щоб почати! 🚀`, {
@@ -623,11 +581,11 @@ async function handleMyOrders(chatId, messageId, userId) {
 
     let text = '📦 <b>Ваші замовлення:</b>\n\n';
 
-    result.rows.forEach((order, index) => {
+    orders.forEach((order, index) => {
       const status = statusEmojis[order.status] || '❓';
-      text += `${index + 1}. ${status} #${order.order_number}\n`;
+      text += `${index + 1}. ${status} #${order.orderNumber}\n`;
       text += `   Послуга: ${order.service}\n`;
-      text += `   Дата: ${new Date(order.created_at).toLocaleDateString('uk-UA')}\n\n`;
+      text += `   Дата: ${new Date(order.createdAt).toLocaleDateString('uk-UA')}\n\n`;
     });
 
     await editMessage(chatId, messageId, text, {
@@ -792,9 +750,83 @@ async function processWebhookUpdate(update) {
   }
 }
 
+/**
+ * Відправка сповіщення про нове замовлення з сайту
+ * (замінює старий telegram.js)
+ */
+async function sendOrderNotification(orderData) {
+  if (!bot) {
+    console.warn('⚠️  Telegram бот не ініціалізований');
+    return false;
+  }
+
+  if (!ADMIN_CHAT_ID) {
+    console.warn('⚠️  TELEGRAM_CHAT_ID не встановлений');
+    return false;
+  }
+
+  try {
+    let message = '📦 <b>НОВЕ ЗАМОВЛЕННЯ З САЙТУ</b>\n\n';
+
+    // Контактна інформація
+    message += '<b>👤 Клієнт:</b>\n';
+    message += `Ім'я: ${orderData.customer.name}\n`;
+    message += `Email: ${orderData.customer.email}\n`;
+    message += `Телефон: ${orderData.customer.phone || 'не вказано'}\n\n`;
+
+    // Послуга
+    const serviceNames = {
+      'engraving': 'Лазерне гравіювання',
+      'cutting': 'Лазерна різка',
+      'design': 'Дизайн',
+      'shop': 'Магазин товарів'
+    };
+    message += `<b>🛠 Послуга:</b> ${serviceNames[orderData.service] || orderData.service}\n\n`;
+
+    // Деталі послуги
+    if (orderData.engraving) {
+      message += '<b>📝 Гравіювання:</b>\n';
+      message += `Матеріал: ${orderData.engraving.material}\n`;
+      message += `Розмір: ${orderData.engraving.size}\n`;
+      message += `Кількість: ${orderData.engraving.quantity}\n\n`;
+    }
+
+    if (orderData.cutting) {
+      message += '<b>✂️ Різка:</b>\n';
+      message += `Матеріал: ${orderData.cutting.material}\n`;
+      message += `Довжина: ${orderData.cutting.length} м\n`;
+      message += `Деталей: ${orderData.cutting.detailCount}\n\n`;
+    }
+
+    // Ціна
+    if (orderData.pricing) {
+      message += '<b>💰 Вартість:</b>\n';
+      message += `${orderData.pricing.totalPrice} ${orderData.pricing.currency || 'UAH'}\n\n`;
+    }
+
+    // Коментарі
+    if (orderData.notes) {
+      message += '<b>📝 Коментарі:</b>\n';
+      message += `${orderData.notes}\n\n`;
+    }
+
+    // Час
+    message += `<i>Час отримання: ${new Date().toLocaleString('uk-UA')}</i>`;
+
+    await sendMessage(ADMIN_CHAT_ID, message);
+
+    console.log('✅ Замовлення відправлено у Telegram');
+    return true;
+  } catch (error) {
+    console.error('❌ Помилка при відправці у Telegram:', error.message);
+    return false;
+  }
+}
+
 module.exports = {
   initBot,
   bot,
   processWebhookUpdate,
-  sendMessage
+  sendMessage,
+  sendOrderNotification
 };

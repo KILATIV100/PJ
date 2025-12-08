@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const nodemailer = require('nodemailer');
-const { sendOrderNotification } = require('../services/telegram');
+const { sendOrderNotification } = require('../services/telegram-bot');
 
 // ============================================
 // EMAIL CONFIGURATION
@@ -140,23 +140,26 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Створити замовлення
-    const order = new Order({
+    // Створити замовлення через Order model
+    const savedOrder = await Order.create({
       customer: {
         name: customer.name || 'N/A',
         email: customer.email,
         phone: customer.phone || null,
-        company: customer.company || null
+        company: customer.company || null,
+        address: customer.address || null,
+        city: customer.city || null
       },
       service,
       engraving: service === 'engraving' || service === 'combined' ? engraving : undefined,
       cutting: service === 'cutting' || service === 'combined' ? cutting : undefined,
       design: service === 'design' || service === 'combined' ? design : undefined,
+      shopItems: req.body.shopItems || undefined,
       files: files || [],
       pricing: {
         basePrice: pricing.basePrice || 0,
-        additionalCosts: pricing.additionalCosts || 0,
         discount: pricing.discount || 0,
+        discountPercent: pricing.discountPercent || 0,
         totalPrice: pricing.totalPrice || 0,
         currency: pricing.currency || 'UAH'
       },
@@ -165,12 +168,9 @@ router.post('/', async (req, res) => {
         status: 'pending',
         transactionId: payment?.transactionId || null
       },
-      notes: notes || '',
-      status: 'new'
+      notes: notes || ''
     });
 
-    // Зберегти в БД
-    const savedOrder = await order.save();
     console.log('✅ Замовлення створено:', savedOrder.orderNumber);
 
     // Відправити сповіщення у Telegram (асинхронно)
@@ -194,7 +194,7 @@ router.post('/', async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Замовлення успішно створено!',
-      order: savedOrder.toJSON()
+      order: savedOrder
     });
   } catch (error) {
     console.error('❌ Помилка створення замовлення:', error);
@@ -221,13 +221,8 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    // Пошук по ID або orderNumber
-    const order = await Order.findOne({
-      $or: [
-        { _id: id },
-        { orderNumber: id }
-      ]
-    });
+    // Інкрементувати views і отримати замовлення
+    const order = await Order.incrementViews(id);
 
     if (!order) {
       return res.status(404).json({
@@ -236,13 +231,9 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    // Інкрементувати views
-    order.views = (order.views || 0) + 1;
-    await order.save();
-
     res.json({
       success: true,
-      order: order.toJSON()
+      order: order
     });
   } catch (error) {
     console.error('❌ Помилка отримання замовлення:', error);
@@ -269,15 +260,12 @@ router.get('/by-email/:email', async (req, res) => {
       });
     }
 
-    const orders = await Order.find({
-      'customer.email': email,
-      isArchived: false
-    }).sort({ createdAt: -1 });
+    const orders = await Order.findByEmail(email);
 
     res.json({
       success: true,
       count: orders.length,
-      orders: orders.map(o => o.toJSON())
+      orders: orders
     });
   } catch (error) {
     console.error('❌ Помилка отримання замовлень:', error);
@@ -297,7 +285,19 @@ router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { status, notes } = req.body;
 
-    const order = await Order.findById(id);
+    // Дозволити тільки оновлення notes та статусу (обмежено)
+    const updates = {};
+    const allowedStatuses = ['new', 'accepted', 'in-progress', 'ready', 'completed', 'cancelled'];
+
+    if (status !== undefined && allowedStatuses.includes(status)) {
+      updates.status = status;
+    }
+
+    if (notes !== undefined) {
+      updates.notes = notes;
+    }
+
+    const order = await Order.update(id, updates);
 
     if (!order) {
       return res.status(404).json({
@@ -306,22 +306,10 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // Дозволити тільки оновлення notes та статусу (обмежено)
-    const allowedStatuses = ['new', 'in_progress', 'completed', 'cancelled'];
-    if (status !== undefined && allowedStatuses.includes(status)) {
-      order.status = status;
-    }
-
-    if (notes !== undefined) {
-      order.notes = notes;
-    }
-
-    await order.save();
-
     res.json({
       success: true,
       message: 'Замовлення оновлено',
-      order: order.toJSON()
+      order: order
     });
   } catch (error) {
     console.error('❌ Помилка оновлення замовлення:', error);

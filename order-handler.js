@@ -5,9 +5,15 @@
 
 class OrderHandler {
   constructor() {
-    this.apiUrl = 'http://localhost:3000/api';
+    // Динамічне визначення API URL
+    // На production використовується поточний host, локально - localhost:3000
+    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    this.apiUrl = isProduction ? `${window.location.origin}/api` : 'http://localhost:3000/api';
+
     this.currentOrder = null;
     this.validationErrors = [];
+
+    console.log('📡 API URL:', this.apiUrl);
   }
 
   /**
