@@ -64,8 +64,14 @@ app.get('/api/health', (req, res) => {
 
 // Config endpoint - публічні налаштування для фронтенду
 app.get('/api/config', (req, res) => {
+  let botUsername = process.env.TELEGRAM_BOT_USERNAME || null;
+  // Видаляємо @ якщо він присутній
+  if (botUsername && botUsername.startsWith('@')) {
+    botUsername = botUsername.substring(1);
+  }
+
   res.json({
-    telegramBotUsername: process.env.TELEGRAM_BOT_USERNAME || null,
+    telegramBotUsername: botUsername,
     environment: process.env.NODE_ENV || 'development'
   });
 });
