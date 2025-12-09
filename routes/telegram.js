@@ -153,7 +153,12 @@ router.delete('/webhook', async (req, res) => {
  * Отримати публічну інформацію про бота (username)
  */
 router.get('/bot-info', (req, res) => {
-  const botUsername = process.env.TELEGRAM_BOT_USERNAME;
+  let botUsername = process.env.TELEGRAM_BOT_USERNAME;
+
+  // Видаляємо @ якщо він присутній
+  if (botUsername && botUsername.startsWith('@')) {
+    botUsername = botUsername.substring(1);
+  }
 
   if (!botUsername || botUsername === 'your_bot_username') {
     return res.status(404).json({
